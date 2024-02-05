@@ -14,11 +14,11 @@ Appointment.init(
       type: DataTypes.DATE,
       allowNull: false,
     },
-    start_time: {
+    startTime: {
       type: DataTypes.TIME,
       allowNull: false,
     },
-    end_time: {
+    endTime: {
       type: DataTypes.TIME,
       allowNull: false,
     },
@@ -26,7 +26,7 @@ Appointment.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    account_id: {
+    accountId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -34,7 +34,7 @@ Appointment.init(
         key: "id",
       },
     },
-    room_id: {
+    roomId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -42,12 +42,18 @@ Appointment.init(
         key: "id",
       },
     },
+    deletedAt: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
   },
   {
     sequelize,
     modelName: "appointment",
     tableName: "appointment",
     timestamps: true,
+    paranoid: true,
+    underscored: true,
   }
 );
 Appointment.belongsTo(Account, { foreignKey: "account_id" });

@@ -17,7 +17,7 @@ Account.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    department_id: {
+    departmentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -25,8 +25,19 @@ Account.init(
         key: "id",
       },
     },
+    deletedAt: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
   },
-  { sequelize, modelName: "account", tableName: "account", timestamps: true }
+  {
+    sequelize,
+    modelName: "account",
+    tableName: "account",
+    timestamps: true,
+    paranoid: true,
+    underscored: true,
+  }
 );
 Account.belongsTo(Department, { foreignKey: "department_id" });
 Department.hasMany(Account, { foreignKey: "department_id" });

@@ -13,7 +13,7 @@ Room.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    department_id: {
+    departmentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -21,8 +21,19 @@ Room.init(
         key: "id",
       },
     },
+    deletedAt: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    },
   },
-  { sequelize, modelName: "room", tableName: "room", timestamps: true }
+  {
+    sequelize,
+    modelName: "room",
+    tableName: "room",
+    timestamps: true,
+    paranoid: true,
+    underscored: true,
+  }
 );
 Room.belongsTo(Department, { foreignKey: "department_id" });
 Department.hasMany(Room, { foreignKey: "department_id" });
