@@ -1,7 +1,21 @@
-import { DataTypes, Model } from "sequelize";
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
 import { sequelize } from "../../config/db";
 import Department from "./Department";
-class Room extends Model {}
+
+export type RoomAttributes = InferAttributes<Room>;
+export type RoomCreationAttribute = InferCreationAttributes<Room>;
+
+class Room extends Model<RoomAttributes, RoomCreationAttribute> {
+  declare id: number;
+  declare name: string;
+  declare departmentId: number;
+  declare deletedAt: string | object;
+}
 Room.init(
   {
     id: {

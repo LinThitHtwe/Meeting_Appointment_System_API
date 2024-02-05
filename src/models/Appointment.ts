@@ -1,8 +1,29 @@
-import { DataTypes, Model } from "sequelize";
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
 import { sequelize } from "../../config/db";
 import Account from "./Account";
 import Room from "./Room";
-class Appointment extends Model {}
+
+export type AppointmentAttributes = InferAttributes<Appointment>;
+export type AppointmentCreationAttribute = InferCreationAttributes<Appointment>;
+
+class Appointment extends Model<
+  AppointmentAttributes,
+  AppointmentCreationAttribute
+> {
+  declare id: number;
+  declare date: string | object;
+  declare startTime: string | object;
+  declare endTime: string | object;
+  declare description: string;
+  declare accountId: number;
+  declare roomId: number;
+  declare deletedAt: string | object;
+}
 Appointment.init(
   {
     id: {

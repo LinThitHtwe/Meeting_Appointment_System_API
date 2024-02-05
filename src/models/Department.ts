@@ -1,6 +1,22 @@
-import { DataTypes, Model } from "sequelize";
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
 import { sequelize } from "../../config/db";
-class Department extends Model {}
+
+export type DepartmentAttributes = InferAttributes<Department>;
+export type DepartmentCreationAttribute = InferCreationAttributes<Department>;
+
+class Department extends Model<
+  DepartmentAttributes,
+  DepartmentCreationAttribute
+> {
+  declare id: number;
+  declare name: string;
+  declare deletedAt: string | object;
+}
 Department.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
