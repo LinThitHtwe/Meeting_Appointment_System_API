@@ -13,9 +13,9 @@ class Department extends Model<
   DepartmentAttributes,
   DepartmentCreationAttribute
 > {
-  declare id: number;
+  declare id?: number;
   declare name: string;
-  declare deletedAt: string | object;
+  declare deletedAt?: string | object;
 }
 Department.init(
   {
@@ -31,6 +31,7 @@ Department.init(
     modelName: "department",
     tableName: "department",
     timestamps: true,
+
     paranoid: true,
     underscored: true,
   }

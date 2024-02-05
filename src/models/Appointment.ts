@@ -15,14 +15,14 @@ class Appointment extends Model<
   AppointmentAttributes,
   AppointmentCreationAttribute
 > {
-  declare id: number;
+  declare id?: number;
   declare date: string | object;
   declare startTime: string | object;
   declare endTime: string | object;
   declare description: string;
   declare accountId: number;
   declare roomId: number;
-  declare deletedAt: string | object;
+  declare deletedAt?: string | object;
 }
 Appointment.init(
   {

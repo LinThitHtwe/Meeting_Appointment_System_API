@@ -11,10 +11,10 @@ export type RoomAttributes = InferAttributes<Room>;
 export type RoomCreationAttribute = InferCreationAttributes<Room>;
 
 class Room extends Model<RoomAttributes, RoomCreationAttribute> {
-  declare id: number;
+  declare id?: number;
   declare name: string;
   declare departmentId: number;
-  declare deletedAt: string | object;
+  declare deletedAt?: string | object;
 }
 Room.init(
   {

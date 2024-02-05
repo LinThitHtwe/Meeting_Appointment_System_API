@@ -28,13 +28,10 @@ export const responseOk = (
   return res.status(statusCode).json(response);
 };
 
-export const responseNotFounds = ({
-  res,
-  errorMessage = "Not Found",
-}: {
-  res: Response;
-  errorMessage: string;
-}) => {
+export const responseNotFounds = (
+  res: Response,
+  errorMessage: string = "Not Found"
+) => {
   return res.status(404).json({
     status: "fail",
     message: errorMessage,

@@ -1,4 +1,4 @@
-import { FindOptions, Identifier } from "sequelize";
+import { CreateOptions, FindOptions, Identifier } from "sequelize";
 import Room, { RoomAttributes } from "../models/Room";
 
 const findAll = (options?: FindOptions<RoomAttributes>) =>
@@ -9,4 +9,9 @@ const findByPk = (
   options?: FindOptions<RoomAttributes>
 ) => Room.findByPk(identifier, options);
 
-export { findAll, findByPk };
+const create = (
+  data: { name: string; departmentId: number },
+  options?: CreateOptions<RoomAttributes>
+) => Room.create(data, options);
+
+export default { findAll, findByPk, create };

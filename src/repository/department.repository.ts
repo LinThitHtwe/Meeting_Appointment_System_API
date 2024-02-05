@@ -1,4 +1,4 @@
-import { FindOptions, Identifier } from "sequelize";
+import { CreateOptions, FindOptions, Identifier } from "sequelize";
 import Department, { DepartmentAttributes } from "../models/Department";
 
 const findAll = (options?: FindOptions<DepartmentAttributes>) =>
@@ -9,4 +9,11 @@ const findByPk = (
   options?: FindOptions<DepartmentAttributes>
 ) => Department.findByPk(identifier, options);
 
-export { findAll, findByPk };
+const create = (
+  data: { name: string },
+  options?: CreateOptions<DepartmentAttributes>
+) => Department.create(data);
+
+//const update = (data : {})=>Department.update()
+
+export default { findAll, findByPk, create };

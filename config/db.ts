@@ -21,15 +21,6 @@ export const sequelize = new Sequelize(
   }
 );
 
-sequelize
-  .sync({ force: true })
-  .then(() => {
-    console.log("Tables created!");
-  })
-  .catch((err) => {
-    console.error("Error creating tables:", err);
-  });
-
 export const testDbConnection = async () => {
   try {
     await sequelize.authenticate();

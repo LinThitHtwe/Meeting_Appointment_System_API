@@ -11,11 +11,11 @@ export type AccountAttributes = InferAttributes<Account>;
 export type AccountCreationAttribute = InferCreationAttributes<Account>;
 
 class Account extends Model<AccountAttributes, AccountCreationAttribute> {
-  declare id: number;
+  declare id?: number;
   declare staffId: number;
   declare name: string;
   declare departmentId: number;
-  declare deletedAt: string | object;
+  declare deletedAt?: string | object;
 }
 Account.init(
   {

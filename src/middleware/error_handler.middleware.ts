@@ -8,6 +8,7 @@ type Props = {
 };
 
 export const globalErrorHandler = ({ error, req, res }: Props) => {
+  console.log("err---", error);
   let statusCode = 500;
   let errorMessage = "Internal Server Error";
   if (error instanceof AppException) {
