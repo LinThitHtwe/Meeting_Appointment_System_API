@@ -11,15 +11,24 @@ export const sequelize = new Sequelize(
     dialect: "postgres",
     host: "localhost",
     port: 6000,
-    //   dialectOptions: {
-    //     ssl: {
-    //       require: true,
-    //       rejectUnauthorized: false,
-    //     },
+    // dialectOptions: {
+    //   ssl: {
+    //     require: true,
+    //     rejectUnauthorized: false,
     //   },
+    // },
     sync: { alter: true },
   }
 );
+
+sequelize
+  .sync({ force: true })
+  .then(() => {
+    console.log("Tables created!");
+  })
+  .catch((err) => {
+    console.error("Error creating tables:", err);
+  });
 
 export const testDbConnection = async () => {
   try {
