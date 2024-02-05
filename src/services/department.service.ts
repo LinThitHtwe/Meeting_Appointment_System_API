@@ -15,10 +15,8 @@ export const storeDepartmentInputSchema = z.object({
 export const getAllDepartments = async () => {
   try {
     const departments = await departmentRepository.findAll();
-    console.log("depa---", departments);
     return departments;
   } catch (error) {
-    console.log("ere-", error);
     return error;
   }
 };

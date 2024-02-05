@@ -1,13 +1,31 @@
+import { CreateOptions } from "sequelize";
 import appointmentRepository from "../repository/appointment.repository";
+import { AppointmentAttributes } from "../models/Appointment";
+import { z } from "zod";
 
-type createAppointment = {
-  date: string | object;
-  startTime: string | object;
-  endTime: string | object;
-  description: string;
-  accountId: number;
-  roomId: number;
-};
+export const storeAppointmentInputSchema = z.object({
+  date: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Date cannot be blank or contain only whitespace",
+    }),
+  startTime: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Start time cannot be blank or contain only whitespace",
+    }),
+  endTime: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "End time cannot be blank or contain only whitespace",
+    }),
+  description: z.string(),
+  accountId: z.number(),
+  roomId: z.number(),
+});
 
 export const getAllAppointments = async () => {
   try {
@@ -27,9 +45,16 @@ export const getAppointmentById = async (id: number) => {
   }
 };
 
-export const createAppointment = async (data: createAppointment) => {
+export const createAppointment = async (
+  input: z.infer<typeof storeAppointmentInputSchema>,
+  options?: CreateOptions<AppointmentAttributes>
+) => {
   try {
-    const newAppointment = await appointmentRepository.create(data);
+    const newAppointment = await appointmentRepository.create(
+      { ...input },
+      options
+    );
+    return newAppointment;
   } catch (error) {
     return error;
   }

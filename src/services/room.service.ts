@@ -12,6 +12,7 @@ export const storeRoomInputSchema = z.object({
     }),
   departmentId: z.number(),
 });
+
 export const getAllRooms = async () => {
   try {
     const rooms = await roomRepository.findAll();

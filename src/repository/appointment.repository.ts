@@ -1,4 +1,4 @@
-import { FindOptions, Identifier } from "sequelize";
+import { CreateOptions, FindOptions, Identifier } from "sequelize";
 import Appointment, { AppointmentAttributes } from "../models/Appointment";
 
 type createAppointment = {
@@ -18,6 +18,9 @@ const findByPk = (
   options?: FindOptions<AppointmentAttributes>
 ) => Appointment.findByPk(identifier, options);
 
-const create = (data: createAppointment) => Appointment.create(data);
+const create = (
+  data: createAppointment,
+  options?: CreateOptions<AppointmentAttributes>
+) => Appointment.create(data, options);
 
 export default { findAll, findByPk, create };

@@ -1,4 +1,4 @@
-import { FindOptions, Identifier } from "sequelize";
+import { CreateOptions, FindOptions, Identifier } from "sequelize";
 import Account, { AccountAttributes } from "../models/Account";
 
 type createAccount = {
@@ -15,6 +15,9 @@ const findByPk = (
   options?: FindOptions<AccountAttributes>
 ) => Account.findByPk(identifier, options);
 
-const create = (data: createAccount) => Account.create(data);
+const create = (
+  data: createAccount,
+  options?: CreateOptions<AccountAttributes>
+) => Account.create(data, options);
 
 export default { findAll, findByPk, create };
