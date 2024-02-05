@@ -14,4 +14,16 @@ const create = (
   options?: CreateOptions<RoomAttributes>
 ) => Room.create(data, options);
 
-export default { findAll, findByPk, create };
+const update = (
+  id: number,
+  data: { name: string; departmentId?: number },
+  options?: CreateOptions<RoomAttributes>
+) =>
+  Room.update(data, {
+    where: { id: id },
+    returning: true,
+    individualHooks: true,
+    ...options,
+  });
+
+export default { findAll, findByPk, create, update };

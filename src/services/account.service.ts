@@ -19,7 +19,7 @@ export const getAllAccounts = async () => {
     const accounts = await accountRepository.findAll();
     return accounts;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -28,7 +28,7 @@ export const getAccountById = async (id: number) => {
     const account = await accountRepository.findByPk(id);
     return account;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -46,6 +46,27 @@ export const createAccount = async (
       options
     );
   } catch (error) {
-    return error;
+    throw error;
+  }
+};
+
+export const updateAccount = async (
+  id: number,
+  input: z.infer<typeof storeAccountInputSchema>,
+  options?: CreateOptions<AccountAttributes>
+) => {
+  try {
+    const updatedAccount = accountRepository.update(
+      id,
+      {
+        departmentId: input?.departmentId,
+        name: input?.name,
+        staffId: input?.staffId,
+      },
+      options
+    );
+    return updatedAccount;
+  } catch (error) {
+    throw error;
   }
 };

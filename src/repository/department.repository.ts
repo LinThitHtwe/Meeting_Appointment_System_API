@@ -12,8 +12,18 @@ const findByPk = (
 const create = (
   data: { name: string },
   options?: CreateOptions<DepartmentAttributes>
-) => Department.create(data);
+) => Department.create(data, options);
 
-//const update = (data : {})=>Department.update()
+const update = (
+  id: number,
+  data: { name: string },
+  options?: CreateOptions<DepartmentAttributes>
+) =>
+  Department.update(data, {
+    where: { id: id },
+    returning: true,
+    individualHooks: true,
+    ...options,
+  });
 
-export default { findAll, findByPk, create };
+export default { findAll, findByPk, create, update };

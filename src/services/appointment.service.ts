@@ -32,7 +32,7 @@ export const getAllAppointments = async () => {
     const appointments = await appointmentRepository.findAll();
     return appointments;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -41,7 +41,7 @@ export const getAppointmentById = async (id: number) => {
     const appointment = await appointmentRepository.findByPk(id);
     return appointment;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -56,6 +56,23 @@ export const createAppointment = async (
     );
     return newAppointment;
   } catch (error) {
-    return error;
+    throw error;
+  }
+};
+
+export const updateRoom = async (
+  id: number,
+  input: z.infer<typeof storeAppointmentInputSchema>,
+  options?: CreateOptions<AppointmentAttributes>
+) => {
+  try {
+    const updatedAppointment = appointmentRepository.update(
+      id,
+      { ...input },
+      options
+    );
+    return updatedAppointment;
+  } catch (error) {
+    throw error;
   }
 };

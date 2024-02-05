@@ -20,4 +20,16 @@ const create = (
   options?: CreateOptions<AccountAttributes>
 ) => Account.create(data, options);
 
-export default { findAll, findByPk, create };
+const update = (
+  id: number,
+  data: { name?: string; staffId?: number; departmentId?: number },
+  options?: CreateOptions<AccountAttributes>
+) =>
+  Account.update(data, {
+    where: { id: id },
+    returning: true,
+    individualHooks: true,
+    ...options,
+  });
+
+export default { findAll, findByPk, create, update };

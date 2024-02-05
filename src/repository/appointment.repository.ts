@@ -10,6 +10,15 @@ type createAppointment = {
   roomId: number;
 };
 
+type updateAppointment = {
+  date?: string | object;
+  startTime?: string | object;
+  endTime?: string | object;
+  description?: string;
+  accountId?: number;
+  roomId?: number;
+};
+
 const findAll = (options?: FindOptions<AppointmentAttributes>) =>
   Appointment.findAll(options);
 
@@ -23,4 +32,16 @@ const create = (
   options?: CreateOptions<AppointmentAttributes>
 ) => Appointment.create(data, options);
 
-export default { findAll, findByPk, create };
+const update = (
+  id: number,
+  data: updateAppointment,
+  options?: CreateOptions<AppointmentAttributes>
+) =>
+  Appointment.update(data, {
+    where: { id: id },
+    returning: true,
+    individualHooks: true,
+    ...options,
+  });
+
+export default { findAll, findByPk, create, update };

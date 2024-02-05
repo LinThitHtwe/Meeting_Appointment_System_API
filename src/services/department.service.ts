@@ -17,7 +17,7 @@ export const getAllDepartments = async () => {
     const departments = await departmentRepository.findAll();
     return departments;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -26,7 +26,7 @@ export const getDepartmentById = async (id: number) => {
     const department = await departmentRepository.findByPk(id);
     return department;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -43,6 +43,23 @@ export const createDepartment = async (
     );
     return newDepartment;
   } catch (error) {
-    return error;
+    throw error;
+  }
+};
+
+export const updateDepartment = async (
+  id: number,
+  input: z.infer<typeof storeDepartmentInputSchema>,
+  options?: CreateOptions<DepartmentAttributes>
+) => {
+  try {
+    const updatedDepartment = departmentRepository.update(
+      id,
+      { name: input.name },
+      options
+    );
+    return updatedDepartment;
+  } catch (error) {
+    throw error;
   }
 };

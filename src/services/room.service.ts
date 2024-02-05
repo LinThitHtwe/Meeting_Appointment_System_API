@@ -18,7 +18,7 @@ export const getAllRooms = async () => {
     const rooms = await roomRepository.findAll();
     return rooms;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -27,7 +27,7 @@ export const getRoomById = async (id: number) => {
     const room = await roomRepository.findByPk(id);
     return room;
   } catch (error) {
-    return error;
+    throw error;
   }
 };
 
@@ -45,6 +45,23 @@ export const createRoom = async (
     );
     return newRoom;
   } catch (error) {
-    return error;
+    throw error;
+  }
+};
+
+export const updateRoom = async (
+  id: number,
+  input: z.infer<typeof storeRoomInputSchema>,
+  options?: CreateOptions<RoomAttributes>
+) => {
+  try {
+    const updatedRoom = roomRepository.update(
+      id,
+      { name: input.name, departmentId: input?.departmentId },
+      options
+    );
+    return updatedRoom;
+  } catch (error) {
+    throw error;
   }
 };

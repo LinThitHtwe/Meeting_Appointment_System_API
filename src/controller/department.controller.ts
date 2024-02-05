@@ -13,6 +13,7 @@ import {
   getAllDepartments,
   getDepartmentById,
   storeDepartmentInputSchema,
+  updateDepartment,
 } from "../services/department.service";
 
 const getAll = asyncHandler(async (req, res, next) => {
@@ -25,9 +26,9 @@ const store = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
-  const department = await sequelize.transaction(async (transaction) => {
-    createDepartment(requestData.data, { transaction });
-  });
+  const department = await sequelize.transaction(async (transaction) =>
+    createDepartment(requestData.data, { transaction })
+  );
 
   return responseOk(res, 201, department);
 });
@@ -49,8 +50,32 @@ const getOne = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, department);
 });
 
+const updateOne = asyncHandler(async (req, res, next) => {
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
+  if (!requestParams.success) {
+    return responseUnprocessableEntity(res, requestParams.error);
+  }
+  const isDepartmentExist = await getDepartmentById(requestParams.data);
+  if (!isDepartmentExist) {
+    return responseNotFounds(res, "Department not found");
+  }
+  const requestData = storeDepartmentInputSchema.safeParse(req.body);
+  if (!requestData.success) {
+    return responseUnprocessableEntity(res, requestData.error);
+  }
+  const department = await sequelize.transaction(async (transaction) =>
+    updateDepartment(requestParams.data, requestData.data, { transaction })
+  );
+
+  return responseOk(res, 200, department);
+});
+
 export default {
   getAll,
   store,
   getOne,
+  updateOne,
 };
