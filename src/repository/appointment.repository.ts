@@ -18,6 +18,7 @@ type updateAppointment = {
   description?: string;
   accountId?: number;
   roomId?: number;
+  staffId?: number;
 };
 
 const findAll = (options?: FindOptions<AppointmentAttributes>) =>

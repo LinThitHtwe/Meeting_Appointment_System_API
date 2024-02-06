@@ -15,7 +15,7 @@ const create = (
 ) => Department.create(data, options);
 
 const update = async (
-  data: { name: string },
+  data: { name?: string; description?: string },
   options?: CreateOptions<DepartmentAttributes> | any
 ) => {
   return Department.update(data, {
