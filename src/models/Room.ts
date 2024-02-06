@@ -1,4 +1,9 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
 import { sequelize } from "../../config/db";
 import Department from "./Department";
 
@@ -8,7 +13,7 @@ export type RoomCreationAttribute = InferCreationAttributes<Room>;
 class Room extends Model<RoomAttributes, RoomCreationAttribute> {
   declare id?: number;
   declare name: string;
-  declare description: number;
+  declare description: string;
   declare isDeleted?: boolean;
 }
 Room.init(
@@ -22,7 +27,7 @@ Room.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    description:{
+    description: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -43,6 +48,5 @@ Room.init(
 
 // Room.belongsTo(Department, { foreignKey: "department_id" });
 // Department.hasMany(Room, { foreignKey: "department_id" });
-
 
 export default Room;
