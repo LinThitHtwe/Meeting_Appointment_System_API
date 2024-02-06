@@ -14,7 +14,7 @@ class Account extends Model<AccountAttributes, AccountCreationAttribute> {
   declare id?: number;
   declare username: string;
   declare password: string;
-  declare deletedAt?: string | object;
+  declare isDeleted?: boolean;
 }
 Account.init(
   {
@@ -31,7 +31,7 @@ Account.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },

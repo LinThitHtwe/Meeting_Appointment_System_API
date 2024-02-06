@@ -16,24 +16,36 @@ const app: Application = express();
 // Account.sync();
 // Appointment.sync();
 
-testDbConnection().then(() => {
-  Department.sync();
-  Room.sync();
-  Account.sync();
-  WorkingHours.sync();
-  Appointment.sync().then(() => {
-    Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
-    Room.hasMany(Appointment);
+Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
+Room.hasMany(Appointment);
 
-    Appointment.belongsTo(Department, { constraints: true, onDelete: "CASCADE" });
-    Department.hasMany(Appointment);
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+Appointment.belongsTo(Department, { constraints: true, onDelete: "CASCADE" });
+Department.hasMany(Appointment);
+
+testDbConnection()
+  .then(() => {
+    Department.sync();
+    Room.sync();
+    Account.sync();
+    WorkingHours.sync();
+
+    Appointment.sync().then(() => {
+      Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
+      Room.hasMany(Appointment);
+
+      Appointment.belongsTo(Department, {
+        constraints: true,
+        onDelete: "CASCADE",
+      });
+      Department.hasMany(Appointment);
+      app.listen(3000, () => {
+        console.log("Server is running on port 3000");
+      });
     });
+  })
+  .catch((error: Error) => {
+    console.error("Unable to connect to the database:", error);
   });
-}).catch((error: Error) => {
-  console.error("Unable to connect to the database:", error);
-});
 
 app.use(express.json());
 app.use(

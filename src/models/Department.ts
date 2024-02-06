@@ -16,14 +16,14 @@ class Department extends Model<
   declare id?: number;
   declare name: string;
   declare description: string;
-  declare deletedAt?: string | object;
+  declare isDeleted?: boolean;
 }
 Department.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.STRING, allowNull: false },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },

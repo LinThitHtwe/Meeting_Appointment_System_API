@@ -14,7 +14,7 @@ class Room extends Model<RoomAttributes, RoomCreationAttribute> {
   declare id?: number;
   declare name: string;
   declare description: number;
-  declare deletedAt?: string | object;
+  declare isDeleted?: boolean;
 }
 Room.init(
   {
@@ -31,7 +31,7 @@ Room.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
@@ -45,7 +45,7 @@ Room.init(
     underscored: true,
   }
 );
-Room.belongsTo(Department, { foreignKey: "department_id" });
-Department.hasMany(Room, { foreignKey: "department_id" });
+// Room.belongsTo(Department, { foreignKey: "department_id" });
+// Department.hasMany(Room, { foreignKey: "department_id" });
 
 export default Room;

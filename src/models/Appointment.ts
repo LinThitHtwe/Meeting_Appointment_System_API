@@ -21,7 +21,7 @@ class Appointment extends Model<
   declare endTime: string | object;
   declare description: string;
   declare staffId: number;
-  declare deletedAt?: string | object;
+  declare isDeleted?: boolean;
 }
 Appointment.init(
   {
@@ -50,7 +50,7 @@ Appointment.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },

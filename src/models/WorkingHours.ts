@@ -18,7 +18,7 @@ class WorkingHours extends Model<
   declare id?: number;
   declare start_time: string | object;
   declare end_time: string | object;
-  declare deletedAt?: string | object;
+  declare isDeleted?: string | object;
 }
 WorkingHours.init(
   {
@@ -35,7 +35,7 @@ WorkingHours.init(
       type: DataTypes.TIME,
       allowNull: false,
     },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
