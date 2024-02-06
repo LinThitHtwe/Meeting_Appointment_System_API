@@ -50,13 +50,11 @@ export const createRoom = async (
 };
 
 export const updateRoom = async (
-  id: number,
   input: z.infer<typeof storeRoomInputSchema>,
-  options?: CreateOptions<RoomAttributes>
+  options?: CreateOptions<RoomAttributes> | any
 ) => {
   try {
     const updatedRoom = roomRepository.update(
-      id,
       { name: input.name, departmentId: input?.departmentId },
       options
     );

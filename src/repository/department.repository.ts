@@ -14,16 +14,15 @@ const create = (
   options?: CreateOptions<DepartmentAttributes>
 ) => Department.create(data, options);
 
-const update = (
-  id: number,
+const update = async (
   data: { name: string },
-  options?: CreateOptions<DepartmentAttributes>
-) =>
-  Department.update(data, {
-    where: { id: id },
-    returning: true,
+  options?: CreateOptions<DepartmentAttributes> | any
+) => {
+  return Department.update(data, {
+    where: options?.where || {},
     individualHooks: true,
-    ...options,
+    transaction: options?.transaction,
   });
+};
 
 export default { findAll, findByPk, create, update };

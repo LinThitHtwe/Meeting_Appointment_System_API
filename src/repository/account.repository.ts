@@ -21,12 +21,11 @@ const create = (
 ) => Account.create(data, options);
 
 const update = (
-  id: number,
   data: { name?: string; staffId?: number; departmentId?: number },
-  options?: CreateOptions<AccountAttributes>
+  options?: CreateOptions<AccountAttributes> | any
 ) =>
   Account.update(data, {
-    where: { id: id },
+    where: options?.where || {},
     returning: true,
     individualHooks: true,
     ...options,

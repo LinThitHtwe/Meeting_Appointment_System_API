@@ -45,19 +45,18 @@ export const createAccount = async (
       },
       options
     );
+    return newAccount;
   } catch (error) {
     throw error;
   }
 };
 
 export const updateAccount = async (
-  id: number,
   input: z.infer<typeof storeAccountInputSchema>,
-  options?: CreateOptions<AccountAttributes>
+  options?: CreateOptions<AccountAttributes> | any
 ) => {
   try {
     const updatedAccount = accountRepository.update(
-      id,
       {
         departmentId: input?.departmentId,
         name: input?.name,

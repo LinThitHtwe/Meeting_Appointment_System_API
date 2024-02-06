@@ -33,12 +33,11 @@ const create = (
 ) => Appointment.create(data, options);
 
 const update = (
-  id: number,
   data: updateAppointment,
-  options?: CreateOptions<AppointmentAttributes>
+  options?: CreateOptions<AppointmentAttributes> | any
 ) =>
   Appointment.update(data, {
-    where: { id: id },
+    where: options?.where || {},
     returning: true,
     individualHooks: true,
     ...options,

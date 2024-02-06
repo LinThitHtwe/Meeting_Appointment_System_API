@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express";
 import {
   asyncHandler,
   responseNotFounds,
@@ -38,11 +37,9 @@ const getOne = asyncHandler(async (req, res, next) => {
     .number({ coerce: true })
     .positive()
     .safeParse(req.params.id);
-
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
-
   const department = await getDepartmentById(requestParams.data);
   if (!department) {
     return responseNotFounds(res, "Department not found");
@@ -67,9 +64,13 @@ const updateOne = asyncHandler(async (req, res, next) => {
     return responseUnprocessableEntity(res, requestData.error);
   }
   const department = await sequelize.transaction(async (transaction) =>
-    updateDepartment(requestParams.data, requestData.data, { transaction })
+    updateDepartment(requestData.data, {
+      transaction,
+      where: {
+        id: requestParams.data,
+      },
+    })
   );
-
   return responseOk(res, 200, department);
 });
 

@@ -60,14 +60,12 @@ export const createAppointment = async (
   }
 };
 
-export const updateRoom = async (
-  id: number,
+export const updateAppointment = async (
   input: z.infer<typeof storeAppointmentInputSchema>,
-  options?: CreateOptions<AppointmentAttributes>
+  options?: CreateOptions<AppointmentAttributes> | any
 ) => {
   try {
     const updatedAppointment = appointmentRepository.update(
-      id,
       { ...input },
       options
     );

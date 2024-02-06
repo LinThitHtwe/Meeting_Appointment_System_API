@@ -48,13 +48,11 @@ export const createDepartment = async (
 };
 
 export const updateDepartment = async (
-  id: number,
   input: z.infer<typeof storeDepartmentInputSchema>,
-  options?: CreateOptions<DepartmentAttributes>
+  options?: CreateOptions<DepartmentAttributes> | any
 ) => {
   try {
     const updatedDepartment = departmentRepository.update(
-      id,
       { name: input.name },
       options
     );

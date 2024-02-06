@@ -12,6 +12,7 @@ import {
   getAllAppointments,
   getAppointmentById,
   storeAppointmentInputSchema,
+  updateAppointment,
 } from "../services/appointment.service";
 
 const getAll = asyncHandler(async (req, res, next) => {
@@ -48,8 +49,37 @@ const getOne = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, appointment);
 });
 
+const updateOne = asyncHandler(async (req, res, next) => {
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
+  if (!requestParams.success) {
+    return responseUnprocessableEntity(res, requestParams.error);
+  }
+  const isAppointmentExist = await getAppointmentById(requestParams.data);
+  if (!isAppointmentExist) {
+    return responseNotFounds(res, "Appointment not found");
+  }
+  const requestData = storeAppointmentInputSchema.safeParse(req.body);
+  if (!requestData.success) {
+    return responseUnprocessableEntity(res, requestData.error);
+  }
+  const appointment = await sequelize.transaction(async (transaction) =>
+    updateAppointment(requestData.data, {
+      transaction,
+      where: {
+        id: requestParams.data,
+      },
+    })
+  );
+
+  return responseOk(res, 200, appointment);
+});
+
 export default {
   getAll,
   store,
   getOne,
+  updateOne,
 };

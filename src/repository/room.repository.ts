@@ -15,12 +15,11 @@ const create = (
 ) => Room.create(data, options);
 
 const update = (
-  id: number,
   data: { name: string; departmentId?: number },
-  options?: CreateOptions<RoomAttributes>
+  options?: CreateOptions<RoomAttributes> | any
 ) =>
   Room.update(data, {
-    where: { id: id },
+    where: options?.where || {},
     returning: true,
     individualHooks: true,
     ...options,
