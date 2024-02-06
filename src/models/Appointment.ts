@@ -14,7 +14,6 @@ class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttrib
   declare endTime: string | object;
   declare description: string;
   declare staffId: number;
-  declare departmentId: number;
   declare isDeleted?: boolean;
 }
 Appointment.init(
@@ -40,11 +39,6 @@ Appointment.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    departmentId: {
-      // Define departmentId field
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     staffId: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -64,11 +58,6 @@ Appointment.init(
   }
 );
 // Appointment.belongsTo(Account, { foreignKey: "account_id" });
-Appointment.belongsTo(Department, {
-  foreignKey: "departmentId", // Set the foreign key
-  constraints: true,
-  onDelete: "CASCADE",
-});
 
 // Account.hasMany(Appointment, { foreignKey: "account_id" });
 // Appointment.belongsTo(Room, { foreignKey: "room_id" });

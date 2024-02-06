@@ -2,6 +2,8 @@ import { CreateOptions } from "sequelize";
 import appointmentRepository from "../repository/appointment.repository";
 import { AppointmentAttributes } from "../models/Appointment";
 import { z } from "zod";
+import Department from "../models/Department";
+import Room from "../models/Room";
 
 export const storeAppointmentInputSchema = z.object({
   date: z
@@ -22,15 +24,20 @@ export const storeAppointmentInputSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "End time cannot be blank or contain only whitespace",
     }),
+  departmentId: z.number(),
   description: z.string(),
-  accountId: z.number(),
   roomId: z.number(),
   staffId: z.number(),
 });
 
 export const getAllAppointments = async () => {
   try {
-    const appointments = await appointmentRepository.findAll();
+    const appointments = await appointmentRepository.findAll({
+      include: [
+        { model: Department, attributes: ["id", "name", "description"] },
+        { model: Room, attributes: ["id", "name", "description"] },
+      ],
+    });
     return appointments;
   } catch (error) {
     throw error;
