@@ -1,9 +1,4 @@
-import {
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-} from "sequelize";
+import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { sequelize } from "../../config/db";
 import Department from "./Department";
 
@@ -45,7 +40,9 @@ Room.init(
     underscored: true,
   }
 );
+
 // Room.belongsTo(Department, { foreignKey: "department_id" });
 // Department.hasMany(Room, { foreignKey: "department_id" });
+
 
 export default Room;
