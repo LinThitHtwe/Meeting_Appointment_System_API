@@ -50,6 +50,7 @@ export const createRoom = async (
     );
     return newRoom;
   } catch (error) {
+    console.log("erer---", error);
     throw error;
   }
 };
