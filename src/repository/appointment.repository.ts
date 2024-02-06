@@ -6,9 +6,9 @@ type createAppointment = {
   startTime: string | object;
   endTime: string | object;
   description: string;
-  accountId: number;
   roomId: number;
   staffId: number;
+  departmentId: number;
 };
 
 type updateAppointment = {
@@ -20,23 +20,15 @@ type updateAppointment = {
   roomId?: number;
 };
 
-const findAll = (options?: FindOptions<AppointmentAttributes>) =>
-  Appointment.findAll(options);
+const findAll = (options?: FindOptions<AppointmentAttributes>) => Appointment.findAll(options);
 
-const findByPk = (
-  identifier: Identifier,
-  options?: FindOptions<AppointmentAttributes>
-) => Appointment.findByPk(identifier, options);
+const findByPk = (identifier: Identifier, options?: FindOptions<AppointmentAttributes>) =>
+  Appointment.findByPk(identifier, options);
 
-const create = (
-  data: createAppointment,
-  options?: CreateOptions<AppointmentAttributes>
-) => Appointment.create(data, options);
+const create = (data: createAppointment, options?: CreateOptions<AppointmentAttributes>) =>
+  Appointment.create(data, options);
 
-const update = (
-  data: updateAppointment,
-  options?: CreateOptions<AppointmentAttributes> | any
-) =>
+const update = (data: updateAppointment, options?: CreateOptions<AppointmentAttributes> | any) =>
   Appointment.update(data, {
     where: options?.where || {},
     returning: true,

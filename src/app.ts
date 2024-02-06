@@ -9,6 +9,7 @@ import Room from "./models/Room";
 import Account from "./models/Admin";
 import Appointment from "./models/Appointment";
 import WorkingHours from "./models/WorkingHours";
+import router from "./routes";
 
 const app: Application = express();
 // Department.sync();
@@ -53,7 +54,7 @@ app.use(
 );
 
 app.use(timingMiddleware);
-// app.use("/api/v1/", routes);
+app.use("/api/v1/", router);
 app.use(globalErrorHandler);
 
 export default app;
