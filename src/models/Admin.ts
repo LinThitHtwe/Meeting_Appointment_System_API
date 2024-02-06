@@ -12,10 +12,9 @@ export type AccountCreationAttribute = InferCreationAttributes<Account>;
 
 class Account extends Model<AccountAttributes, AccountCreationAttribute> {
   declare id?: number;
-  declare staffId: number;
-  declare name: string;
-  declare departmentId: number;
-  declare deletedAt?: string | object;
+  declare username: string;
+  declare password: string;
+  declare isDeleted?: boolean;
 }
 Account.init(
   {
@@ -24,30 +23,15 @@ Account.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    staffId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        isFourDigit(value: number) {
-          if (value && (value < 1000 || value > 9999)) {
-            throw new Error("staffId must be a 4-digit number");
-          }
-        },
-      },
-    },
-    name: {
+    username: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    departmentId: {
-      type: DataTypes.INTEGER,
+    password: {
+      type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "department",
-        key: "id",
-      },
     },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
@@ -61,7 +45,7 @@ Account.init(
     underscored: true,
   }
 );
-Account.belongsTo(Department, { foreignKey: "department_id" });
-Department.hasMany(Account, { foreignKey: "department_id" });
+// Account.belongsTo(Department, { foreignKey: "department_id" });
+// Department.hasMany(Account, { foreignKey: "department_id" });
 
 export default Account;

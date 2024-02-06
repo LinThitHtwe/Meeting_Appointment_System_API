@@ -8,8 +8,8 @@ export type RoomCreationAttribute = InferCreationAttributes<Room>;
 class Room extends Model<RoomAttributes, RoomCreationAttribute> {
   declare id?: number;
   declare name: string;
-  declare departmentId: number;
-  declare deletedAt?: string | object;
+  declare description: number;
+  declare isDeleted?: boolean;
 }
 Room.init(
   {
@@ -22,15 +22,11 @@ Room.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    departmentId: {
-      type: DataTypes.INTEGER,
+    description:{
+      type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "department",
-        key: "id",
-      },
     },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
@@ -44,7 +40,9 @@ Room.init(
     underscored: true,
   }
 );
-Room.belongsTo(Department, { foreignKey: "departmentId" });
-Department.hasMany(Room, { foreignKey: "departmentId" });
+
+// Room.belongsTo(Department, { foreignKey: "department_id" });
+// Department.hasMany(Room, { foreignKey: "department_id" });
+
 
 export default Room;

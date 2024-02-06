@@ -5,7 +5,7 @@ import {
   Model,
 } from "sequelize";
 import { sequelize } from "../../config/db";
-import Account from "./Account";
+import Account from "./Admin";
 import Room from "./Room";
 
 export type AppointmentAttributes = InferAttributes<Appointment>;
@@ -20,9 +20,8 @@ class Appointment extends Model<
   declare startTime: string | object;
   declare endTime: string | object;
   declare description: string;
-  declare accountId: number;
-  declare roomId: number;
-  declare deletedAt?: string | object;
+  declare staffId: number;
+  declare isDeleted?: boolean;
 }
 Appointment.init(
   {
@@ -47,23 +46,11 @@ Appointment.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    accountId: {
+    staffId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: "account",
-        key: "id",
-      },
     },
-    roomId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "room",
-        key: "id",
-      },
-    },
-    deletedAt: {
+    isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
@@ -77,9 +64,9 @@ Appointment.init(
     underscored: true,
   }
 );
-Appointment.belongsTo(Account, { foreignKey: "account_id" });
-Account.hasMany(Appointment, { foreignKey: "account_id" });
-Appointment.belongsTo(Room, { foreignKey: "room_id" });
-Room.hasMany(Appointment, { foreignKey: "room_id" });
+// Appointment.belongsTo(Account, { foreignKey: "account_id" });
+// Account.hasMany(Appointment, { foreignKey: "account_id" });
+// Appointment.belongsTo(Room, { foreignKey: "room_id" });
+// Room.hasMany(Appointment, { foreignKey: "room_id" });
 
 export default Appointment;
