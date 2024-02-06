@@ -13,7 +13,7 @@ export type RoomCreationAttribute = InferCreationAttributes<Room>;
 class Room extends Model<RoomAttributes, RoomCreationAttribute> {
   declare id?: number;
   declare name: string;
-  declare departmentId: number;
+  declare description: number;
   declare deletedAt?: string | object;
 }
 Room.init(
@@ -27,13 +27,9 @@ Room.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    departmentId: {
-      type: DataTypes.INTEGER,
+    description:{
+      type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "department",
-        key: "id",
-      },
     },
     deletedAt: {
       type: DataTypes.BOOLEAN,

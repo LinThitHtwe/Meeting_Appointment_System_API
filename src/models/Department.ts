@@ -15,12 +15,14 @@ class Department extends Model<
 > {
   declare id?: number;
   declare name: string;
+  declare description: string;
   declare deletedAt?: string | object;
 }
 Department.init(
   {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.STRING, allowNull: false },
     deletedAt: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
@@ -31,7 +33,6 @@ Department.init(
     modelName: "department",
     tableName: "department",
     timestamps: true,
-
     paranoid: true,
     underscored: true,
   }
