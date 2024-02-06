@@ -10,7 +10,12 @@ export const storeDepartmentInputSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "Name cannot be blank or contain only whitespace",
     }),
-  description: z.string(),
+  description: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Description cannot be blank or contain only whitespace",
+    }),
 });
 
 export const getAllDepartments = async () => {

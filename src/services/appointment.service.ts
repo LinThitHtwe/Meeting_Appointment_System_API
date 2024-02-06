@@ -22,8 +22,8 @@ export const storeAppointmentInputSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "End time cannot be blank or contain only whitespace",
     }),
-  departmentId: z.number(),
   description: z.string(),
+  accountId: z.number(),
   roomId: z.number(),
   staffId: z.number(),
 });

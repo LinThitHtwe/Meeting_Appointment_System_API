@@ -2,7 +2,7 @@ import express, { Request, Response, Application } from "express";
 import { testDbConnection } from "../config/db";
 import cors from "cors";
 import { timingMiddleware } from "./middleware/timing.middleware";
-// import routes from "./routes/index";
+import routes from "./routes/index";
 import { globalErrorHandler } from "./middleware/error_handler.middleware";
 import Department from "./models/Department";
 import Room from "./models/Room";

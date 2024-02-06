@@ -10,7 +10,12 @@ export const storeRoomInputSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "Name cannot be blank or contain only whitespace",
     }),
-  description: z.string(),
+  description: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Description cannot be blank or contain only whitespace",
+    }),
 });
 
 export const getAllRooms = async () => {
@@ -45,21 +50,22 @@ export const createRoom = async (
     );
     return newRoom;
   } catch (error) {
+    console.log("erer---", error);
     throw error;
   }
 };
 
-// export const updateRoom = async (
-//   input: z.infer<typeof storeRoomInputSchema>,
-//   options?: CreateOptions<RoomAttributes> | any
-// ) => {
-//   try {
-//     const updatedRoom = roomRepository.update(
-//       { name: input.name, description: input?.description },
-//       options
-//     );
-//     return updatedRoom;
-//   } catch (error) {
-//     throw error;
-//   }
-// };
+export const updateRoom = async (
+  input: z.infer<typeof storeRoomInputSchema>,
+  options?: CreateOptions<RoomAttributes> | any
+) => {
+  try {
+    const updatedRoom = roomRepository.update(
+      { name: input?.name, description: input?.description },
+      options
+    );
+    return updatedRoom;
+  } catch (error) {
+    throw error;
+  }
+};

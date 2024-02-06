@@ -5,7 +5,6 @@ import {
   Model,
 } from "sequelize";
 import { sequelize } from "../../config/db";
-import Department from "./Department";
 
 export type RoomAttributes = InferAttributes<Room>;
 export type RoomCreationAttribute = InferCreationAttributes<Room>;

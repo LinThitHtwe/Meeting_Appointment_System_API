@@ -10,7 +10,7 @@ import {
   storeRoomInputSchema,
   getAllRooms,
   getRoomById,
-  //   updateRoom,
+  updateRoom,
 } from "../services/room.service";
 import { sequelize } from "../../config/db";
 import { z } from "zod";
@@ -46,34 +46,34 @@ const getOne = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, room);
 });
 
-// const updateOne = asyncHandler(async (req, res, next) => {
-//   const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
-//   if (!requestParams.success) {
-//     return responseUnprocessableEntity(res, requestParams.error);
-//   }
-//   const isRoomExist = await getRoomById(requestParams.data);
-//   if (!isRoomExist) {
-//     return responseNotFounds(res, "Room not found");
-//   }
-//   const requestData = storeRoomInputSchema.safeParse(req.body);
-//   if (!requestData.success) {
-//     return responseUnprocessableEntity(res, requestData.error);
-//   }
-//   const room = await sequelize.transaction(async (transaction) =>
-//     updateRoom(requestData.data, {
-//       transaction,
-//       where: {
-//         id: requestParams.data,
-//       },
-//     })
-//   );
+const updateOne = asyncHandler(async (req, res, next) => {
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  if (!requestParams.success) {
+    return responseUnprocessableEntity(res, requestParams.error);
+  }
+  const isRoomExist = await getRoomById(requestParams.data);
+  if (!isRoomExist) {
+    return responseNotFounds(res, "Room not found");
+  }
+  const requestData = storeRoomInputSchema.safeParse(req.body);
+  if (!requestData.success) {
+    return responseUnprocessableEntity(res, requestData.error);
+  }
+  const room = await sequelize.transaction(async (transaction) =>
+    updateRoom(requestData.data, {
+      transaction,
+      where: {
+        id: requestParams.data,
+      },
+    })
+  );
 
-//   return responseOk(res, 200, room);
-// });
+  return responseOk(res, 200, room);
+});
 
 export default {
   getAll,
   store,
   getOne,
-  //   updateOne,
+  updateOne,
 };
