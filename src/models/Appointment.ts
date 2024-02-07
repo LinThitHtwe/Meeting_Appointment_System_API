@@ -1,24 +1,17 @@
-import {
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-} from "sequelize";
+import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { sequelize } from "../../config/db";
 import Account from "./Admin";
 import Room from "./Room";
+import Department from "./Department";
 
 export type AppointmentAttributes = InferAttributes<Appointment>;
 export type AppointmentCreationAttribute = InferCreationAttributes<Appointment>;
 
-class Appointment extends Model<
-  AppointmentAttributes,
-  AppointmentCreationAttribute
-> {
+class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttribute> {
   declare id?: number;
-  declare date: string | object;
-  declare startTime: string | object;
-  declare endTime: string | object;
+  declare date: Date;
+  declare startTime: string;
+  declare endTime: string;
   declare description: string;
   declare staffId: number;
   declare isDeleted?: boolean;
@@ -65,6 +58,7 @@ Appointment.init(
   }
 );
 // Appointment.belongsTo(Account, { foreignKey: "account_id" });
+
 // Account.hasMany(Appointment, { foreignKey: "account_id" });
 // Appointment.belongsTo(Room, { foreignKey: "room_id" });
 // Room.hasMany(Appointment, { foreignKey: "room_id" });
