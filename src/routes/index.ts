@@ -1,5 +1,8 @@
 import express from "express";
 import departmentRoutes from "./department.route";
+import workingHourRoutes from "./workingHour.route";
+import roomRoutes from "./room.route";
+
 
 import appointmentRoutes from "./appointment.route";
 import roomRoutes from "./room.route";
@@ -8,5 +11,6 @@ const router = express.Router();
 router.use("/room", roomRoutes);
 router.use("/department", departmentRoutes);
 router.use("/appointment", appointmentRoutes);
+router.use("/working_hour", workingHourRoutes)
 
 export default router;

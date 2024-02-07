@@ -5,7 +5,6 @@ import {
   Model,
 } from "sequelize";
 import { sequelize } from "../../config/db";
-//   import Department from "./Department";
 
 export type WorkingHoursAttributes = InferAttributes<WorkingHours>;
 export type WorkingHoursCreationAttribute =
@@ -49,7 +48,5 @@ WorkingHours.init(
     underscored: true,
   }
 );
-// Account.belongsTo(Department, { foreignKey: "department_id" });
-// Department.hasMany(Account, { foreignKey: "department_id" });
 
 export default WorkingHours;
