@@ -21,15 +21,21 @@ const getAll = asyncHandler(async (req, res, next) => {
 });
 
 const store = asyncHandler(async (req, res, next) => {
-  const requestData = storeRoomInputSchema.safeParse(req.body);
-  if (!requestData.success) {
-    return responseUnprocessableEntity(res, requestData.error);
-  }
-  const room = await sequelize.transaction(async (transaction) =>
-    createRoom(requestData.data, { transaction })
-  );
+  // const requestData = storeRoomInputSchema.safeParse(req.body);
+  // if (!requestData.success) {
+  //   return responseUnprocessableEntity(res, requestData.error);
+  // }
+  try {
+    // const room = await sequelize.transaction(async (transaction) =>
+    //   createRoom(requestData.data, { transaction })
+    // );
 
-  return responseOk(res, 201, room);
+    // return responseOk(res, 201, room);
+    throw new Error("Testinng");
+  } catch (error) {
+    console.log("controller----", error);
+    next(error);
+  }
 });
 
 const getOne = asyncHandler(async (req, res, next) => {
@@ -41,12 +47,15 @@ const getOne = asyncHandler(async (req, res, next) => {
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
-
-  const room = await getRoomById(requestParams.data);
-  if (!room) {
-    return responseNotFounds(res, "Room not found");
+  try {
+    const room = await getRoomById(requestParams.data);
+    if (!room) {
+      return responseNotFounds(res, "Room not found");
+    }
+    return responseOk(res, 200, room);
+  } catch (error) {
+    next(error);
   }
-  return responseOk(res, 200, room);
 });
 
 const updateOne = asyncHandler(async (req, res, next) => {

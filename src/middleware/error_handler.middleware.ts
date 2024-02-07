@@ -2,17 +2,20 @@ import { NextFunction, Request, Response } from "express";
 import AppException from "../Exception/AppException";
 
 type Props = {
-  error: Error | AppException;
+  error: any;
   req: Request;
   res: Response;
+  next: NextFunction;
 };
 
-export const globalErrorHandler = ({ error, req, res }: Props) => {
+export const globalErrorHandler = ({ error, req, res, next }: Props) => {
+  console.log("yyyyyyyyyyyyyyyyyyyyy");
+  // console.log("errrrwerwrweerr------", error);
   let statusCode = 500;
   let errorMessage = "Internal Server Error";
-  if (error instanceof AppException) {
-    statusCode = error.statusCode;
-    errorMessage = error.message;
-  }
+  // if (error instanceof AppException) {
+  //   statusCode = error.statusCode;
+  //   errorMessage = error.message;
+  // }
   return res.status(statusCode).json({ message: errorMessage });
 };

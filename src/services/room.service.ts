@@ -41,16 +41,16 @@ export const createRoom = async (
   options?: CreateOptions<RoomAttributes>
 ) => {
   try {
-    const newRoom = await roomRepository.create(
-      {
-        name: input.name,
-        description: input.description,
-      },
-      options
-    );
-    return newRoom;
+    // const newRoom = await roomRepository.create(
+    //   {
+    //     name: input.name,
+    //     description: input.description,
+    //   },
+    //   options
+    // );
+    // return newRoom;
+    throw new Error("This is an intentional error for testing.");
   } catch (error) {
-    console.log("erer---", error);
     throw error;
   }
 };

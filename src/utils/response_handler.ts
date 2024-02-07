@@ -48,6 +48,19 @@ export const responseUnprocessableEntity = (
   });
 };
 
+// export const asyncHandler =
+//   (fn: RequestHandler) => (req: Request, res: Response, next: NextFunction) =>
+//     Promise.resolve(fn(req, res, next))
+//       .then((abc) => {
+//         console.log("thennnn", abc);
+//         next();
+//       })
+//       .catch((d) => console.log("aysnccc---", d))
+//       .finally(() => {
+//         console.log("finally");
+//         next();
+//       });
+
 export const asyncHandler =
   (fn: RequestHandler) => (req: Request, res: Response, next: NextFunction) =>
     Promise.resolve(fn(req, res, next)).catch(next);
