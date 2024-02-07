@@ -1,6 +1,12 @@
-import { FindOptions } from "sequelize";
+import { FindOptions, Identifier } from "sequelize";
 import WorkingHours, { WorkingHoursAttributes } from "../models/WorkingHours";
 
-const findAll = (options?: FindOptions<WorkingHoursAttributes>) => WorkingHours.findAll(options);
+const findAll = (options?: FindOptions<WorkingHoursAttributes>) =>
+  WorkingHours.findAll(options);
 
-export default { findAll };
+const findByPk = (
+  identifier: Identifier,
+  options?: FindOptions<WorkingHoursAttributes>
+) => WorkingHours.findByPk(identifier, options);
+
+export default { findAll, findByPk };
