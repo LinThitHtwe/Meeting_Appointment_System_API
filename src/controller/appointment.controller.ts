@@ -21,15 +21,21 @@ const getAll = asyncHandler(async (req, res, next) => {
 });
 
 const store = asyncHandler(async (req, res, next) => {
-  const requestData = storeAppointmentInputSchema.safeParse(req.body);
-  if (!requestData.success) {
-    return responseUnprocessableEntity(res, requestData.error);
-  }
-  const appointment = await sequelize.transaction(async (transaction) =>
-    createAppointment(requestData.data, { transaction })
-  );
+  try {
+    req.body.date = new Date(req.body.date);
+    const requestData = storeAppointmentInputSchema.safeParse(req.body);
+    if (!requestData.success) {
+      return responseUnprocessableEntity(res, requestData.error);
+    }
+    const appointment = await sequelize.transaction(async (transaction) =>
+      createAppointment(requestData.data, { transaction })
+    );
 
-  return responseOk(res, 201, appointment);
+    return responseOk(res, 201, appointment);
+  } catch (error) {
+    console.log(error);
+    return next(error);
+  }
 });
 
 const getOne = asyncHandler(async (req, res, next) => {

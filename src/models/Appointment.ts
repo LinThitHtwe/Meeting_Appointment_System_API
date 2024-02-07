@@ -9,9 +9,9 @@ export type AppointmentCreationAttribute = InferCreationAttributes<Appointment>;
 
 class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttribute> {
   declare id?: number;
-  declare date: string | object;
-  declare startTime: string | object;
-  declare endTime: string | object;
+  declare date: Date;
+  declare startTime: string;
+  declare endTime: string;
   declare description: string;
   declare staffId: number;
   declare isDeleted?: boolean;

@@ -2,9 +2,9 @@ import { CreateOptions, FindOptions, Identifier } from "sequelize";
 import Appointment, { AppointmentAttributes } from "../models/Appointment";
 
 type createAppointment = {
-  date: string | object;
-  startTime: string | object;
-  endTime: string | object;
+  date: Date;
+  startTime: string;
+  endTime: string;
   description: string;
   roomId: number;
   staffId: number;
@@ -12,9 +12,9 @@ type createAppointment = {
 };
 
 type updateAppointment = {
-  date?: string | object;
-  startTime?: string | object;
-  endTime?: string | object;
+  date?: Date;
+  startTime?: string;
+  endTime?: string;
   description?: string;
   accountId?: number;
   roomId?: number;
