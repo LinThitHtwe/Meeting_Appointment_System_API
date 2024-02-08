@@ -24,3 +24,12 @@ export const createWorkingHour = async (data: WorkingHourType) => {
         throw error;
     }
 }
+
+export const getWorkingHourById = async (id: number) => {
+  try {
+    const workingHour = await workingHourRepository.findByPk(id);
+    return workingHour;
+  } catch (error) {
+    throw error;
+  }
+};

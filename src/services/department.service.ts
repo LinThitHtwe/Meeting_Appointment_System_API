@@ -59,10 +59,7 @@ export const updateDepartment = async (
   options?: CreateOptions<DepartmentAttributes> | any
 ) => {
   try {
-    const updatedDepartment = departmentRepository.update(
-      { name: input.name },
-      options
-    );
+    const updatedDepartment = departmentRepository.update({ name: input.name }, options);
     return updatedDepartment;
   } catch (error) {
     throw error;

@@ -33,10 +33,7 @@ const store = asyncHandler(async (req, res, next) => {
 });
 
 const getOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.id);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
 
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
@@ -50,10 +47,7 @@ const getOne = asyncHandler(async (req, res, next) => {
 });
 
 const updateOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.id);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
