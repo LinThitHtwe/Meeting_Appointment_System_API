@@ -1,8 +1,16 @@
 import { CreateOptions, FindOptions, Identifier } from "sequelize";
 import WorkingHours, { WorkingHoursAttributes } from "../models/WorkingHours";
+import { WorkingHourType } from "../../type";
 
 const findAll = (options?: FindOptions<WorkingHoursAttributes>) =>
   WorkingHours.findAll(options);
+
+const create = (
+  data: WorkingHourType,
+  options?: CreateOptions<WorkingHoursAttributes>
+) => {
+  return WorkingHours.create(data, options);
+};
 
 const findByPk = (
   identifier: Identifier,
@@ -10,7 +18,7 @@ const findByPk = (
 ) => WorkingHours.findByPk(identifier, options);
 
 const update = (
-  data: { startTime?: Date; endTime?: Date },
+  data: { startTime?: string; endTime?: string },
   options?: CreateOptions<WorkingHoursAttributes> | any
 ) =>
   WorkingHours.update(data, {
@@ -20,4 +28,4 @@ const update = (
     ...options,
   });
 
-export default { findAll, findByPk, update };
+export default { findAll, findByPk, create, update };

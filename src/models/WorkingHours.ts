@@ -15,8 +15,8 @@ class WorkingHours extends Model<
   WorkingHoursCreationAttribute
 > {
   declare id?: number;
-  declare startTime: Date;
-  declare endTime: Date;
+  declare startTime: string;
+  declare endTime: string;
   declare isDeleted?: boolean;
 }
 WorkingHours.init(

@@ -1,10 +1,27 @@
 import { CreateOptions } from "sequelize";
+import { z } from "zod";
+import { WorkingHourType } from "./../../type";
 import workingHourRepository from "../repository/workingHour.repository";
 import { WorkingHoursAttributes } from "../models/WorkingHours";
 
+const timeFormatRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
+export const storeWorkingHourInputSchema = z.object({
+  startTime: z.string().refine((time) => timeFormatRegex.test(time)),
+  endTime: z.string().refine((time) => timeFormatRegex.test(time)),
+});
+
 export const getAllWorkingHour = async () => {
   try {
-    const workingHour = await workingHourRepository.findAll();
+    const workingHours = await workingHourRepository.findAll();
+    return workingHours;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createWorkingHour = async (data: WorkingHourType) => {
+  try {
+    const workingHour = await workingHourRepository.create(data);
     return workingHour;
   } catch (error) {
     throw error;
@@ -22,8 +39,8 @@ export const getWorkingHourById = async (id: number) => {
 
 export const updateWorkingHour = async (
   data: {
-    startTime: Date;
-    endTime: Date;
+    startTime: string;
+    endTime: string;
   },
   options?: CreateOptions<WorkingHoursAttributes> | any
 ) => {
