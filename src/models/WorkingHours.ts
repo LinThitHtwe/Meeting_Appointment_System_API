@@ -15,9 +15,9 @@ class WorkingHours extends Model<
   WorkingHoursCreationAttribute
 > {
   declare id?: number;
-  declare start_time: string | object;
-  declare end_time: string | object;
-  declare isDeleted?: string | object;
+  declare startTime: string;
+  declare endTime: string;
+  declare isDeleted?: boolean;
 }
 WorkingHours.init(
   {
@@ -26,11 +26,11 @@ WorkingHours.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    start_time: {
+    startTime: {
       type: DataTypes.TIME,
       allowNull: false,
     },
-    end_time: {
+    endTime: {
       type: DataTypes.TIME,
       allowNull: false,
     },
