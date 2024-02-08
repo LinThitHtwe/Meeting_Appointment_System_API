@@ -1,4 +1,9 @@
-import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
+import {
+  DataTypes,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from "sequelize";
 import { sequelize } from "../../config/db";
 import Account from "./Admin";
 import Room from "./Room";
@@ -7,7 +12,10 @@ import Department from "./Department";
 export type AppointmentAttributes = InferAttributes<Appointment>;
 export type AppointmentCreationAttribute = InferCreationAttributes<Appointment>;
 
-class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttribute> {
+class Appointment extends Model<
+  AppointmentAttributes,
+  AppointmentCreationAttribute
+> {
   declare id?: number;
   declare date: Date;
   declare startTime: string;
@@ -15,6 +23,7 @@ class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttrib
   declare description: string;
   declare staffId: number;
   declare isDeleted?: boolean;
+  declare code: string;
 }
 Appointment.init(
   {
@@ -33,6 +42,10 @@ Appointment.init(
     },
     endTime: {
       type: DataTypes.TIME,
+      allowNull: false,
+    },
+    code: {
+      type: DataTypes.STRING,
       allowNull: false,
     },
     description: {

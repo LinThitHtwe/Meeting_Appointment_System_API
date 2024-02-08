@@ -1,4 +1,4 @@
 export type WorkingHourType = {
-    startTime: string,
-    endTime: string
+  startTime: string;
+  endTime: string;
 };
