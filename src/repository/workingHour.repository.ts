@@ -1,6 +1,11 @@
-import { FindOptions } from "sequelize";
+import { CreateOptions, FindOptions } from "sequelize";
 import WorkingHours, { WorkingHoursAttributes } from "../models/WorkingHours";
+import { WorkingHourType } from "../../type";
 
 const findAll = (options?: FindOptions<WorkingHoursAttributes>) => WorkingHours.findAll(options);
 
-export default { findAll };
+const create = (data: WorkingHourType, options?: CreateOptions<WorkingHoursAttributes>) => {
+    return WorkingHours.create(data, options);
+}
+
+export default { findAll, create };
