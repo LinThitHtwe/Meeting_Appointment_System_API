@@ -1,4 +1,4 @@
-import { CreateOptions } from "sequelize";
+import { CreateOptions, FindOptions } from "sequelize";
 import appointmentRepository from "../repository/appointment.repository";
 import { AppointmentAttributes } from "../models/Appointment";
 import { z } from "zod";
@@ -34,13 +34,16 @@ export const storeAppointmentInputSchema = z.object({
     }),
 });
 
-export const getAllAppointments = async () => {
+export const getAllAppointments = async (
+  options?: FindOptions<AppointmentAttributes> | any
+) => {
   try {
     const appointments = await appointmentRepository.findAll({
       include: [
         { model: Department, attributes: ["id", "name", "description"] },
         { model: Room, attributes: ["id", "name", "description"] },
       ],
+      ...options,
     });
     return appointments;
   } catch (error) {
@@ -79,8 +82,9 @@ export const updateAppointment = async (
   options?: CreateOptions<AppointmentAttributes> | any
 ) => {
   try {
+    const bcryptCode = await bcrypt.hash(input.code, 12);
     const updatedAppointment = appointmentRepository.update(
-      { ...input },
+      { ...input, code: bcryptCode },
       options
     );
     return updatedAppointment;
