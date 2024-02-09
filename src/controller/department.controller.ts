@@ -1,5 +1,6 @@
 import {
   asyncHandler,
+  responseConflict,
   responseNotFounds,
   responseOk,
   responseUnprocessableEntity,
@@ -14,6 +15,7 @@ import {
   storeDepartmentInputSchema,
   updateDepartment,
 } from "../services/department.service";
+import { Op } from "sequelize";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const departments = await getAllDepartments();
@@ -25,6 +27,15 @@ const store = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
+  const isDepartmentAlreadyExist = await getAllDepartments({
+    where: {
+      name: requestData.data.name,
+    },
+  });
+
+  if (isDepartmentAlreadyExist.length > 0) {
+    return responseConflict(res, "Department Already Exist");
+  }
   const department = await sequelize.transaction(async (transaction) =>
     createDepartment(requestData.data, { transaction })
   );
@@ -33,7 +44,10 @@ const store = asyncHandler(async (req, res, next) => {
 });
 
 const getOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -45,7 +59,10 @@ const getOne = asyncHandler(async (req, res, next) => {
 });
 
 const updateOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -57,6 +74,19 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
+
+  const isDepartmentAlreadyExist = await getAllDepartments({
+    where: {
+      id: {
+        [Op.not]: requestParams.data,
+      },
+      name: requestData.data.name,
+    },
+  });
+  if (isDepartmentAlreadyExist.length > 0) {
+    return responseConflict(res, "Department Already Exist");
+  }
+
   const department = await sequelize.transaction(async (transaction) =>
     updateDepartment(requestData.data, {
       transaction,

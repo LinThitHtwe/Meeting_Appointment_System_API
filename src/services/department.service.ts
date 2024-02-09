@@ -1,7 +1,7 @@
 import { z } from "zod";
 import departmentRepository from "../repository/department.repository";
 import { DepartmentAttributes } from "../models/Department";
-import { CreateOptions } from "sequelize";
+import { CreateOptions, FindOptions } from "sequelize";
 
 export const storeDepartmentInputSchema = z.object({
   name: z
@@ -18,9 +18,11 @@ export const storeDepartmentInputSchema = z.object({
     }),
 });
 
-export const getAllDepartments = async () => {
+export const getAllDepartments = async (
+  options?: FindOptions<DepartmentAttributes>
+) => {
   try {
-    const departments = await departmentRepository.findAll();
+    const departments = await departmentRepository.findAll(options);
     return departments;
   } catch (error) {
     throw error;
@@ -59,7 +61,10 @@ export const updateDepartment = async (
   options?: CreateOptions<DepartmentAttributes> | any
 ) => {
   try {
-    const updatedDepartment = departmentRepository.update({ name: input.name }, options);
+    const updatedDepartment = departmentRepository.update(
+      { name: input.name },
+      options
+    );
     return updatedDepartment;
   } catch (error) {
     throw error;
