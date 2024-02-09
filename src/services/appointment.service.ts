@@ -2,6 +2,7 @@ import { CreateOptions } from "sequelize";
 import appointmentRepository from "../repository/appointment.repository";
 import { AppointmentAttributes } from "../models/Appointment";
 import { z } from "zod";
+import bcrypt from "bcrypt";
 import Department from "../models/Department";
 import Room from "../models/Room";
 
@@ -32,6 +33,7 @@ export const storeAppointmentInputSchema = z.object({
       message: "Code cannot be blank or contain only whitespace",
     }),
 });
+
 export const getAllAppointments = async () => {
   try {
     const appointments = await appointmentRepository.findAll({
@@ -60,8 +62,10 @@ export const createAppointment = async (
   options?: CreateOptions<AppointmentAttributes>
 ) => {
   try {
+    const bcryptCode = await bcrypt.hash(input.code, 12);
+
     const newAppointment = await appointmentRepository.create(
-      { ...input },
+      { ...input, code: bcryptCode },
       options
     );
     return newAppointment;

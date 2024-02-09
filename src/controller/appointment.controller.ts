@@ -3,6 +3,7 @@ import {
   asyncHandler,
   responseNotFounds,
   responseOk,
+  responseUnauthorized,
   responseUnprocessableEntity,
 } from "../utils/response_handler";
 import { sequelize } from "../../config/db";
@@ -14,6 +15,7 @@ import {
   storeAppointmentInputSchema,
   updateAppointment,
 } from "../services/appointment.service";
+import bcrypt from "bcrypt";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const appointments = await getAllAppointments();
@@ -33,13 +35,51 @@ const store = asyncHandler(async (req, res, next) => {
 
     return responseOk(res, 201, appointment);
   } catch (error) {
-    console.log(error);
     return next(error);
   }
 });
 
+const compareAppointmentCode = asyncHandler(async (req, res, next) => {
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
+  if (!requestParams.success) {
+    return responseUnprocessableEntity(res, requestParams.error);
+  }
+
+  const appointment = await getAppointmentById(requestParams.data);
+  if (!appointment) {
+    return responseNotFounds(res, "Appointment not found");
+  }
+
+  const requestData = z
+    .object({
+      code: z
+        .string()
+        .max(255)
+        .refine((data) => data.trim() !== "", {
+          message: "Code cannot be blank or contain only whitespace",
+        }),
+    })
+    .safeParse(req.body);
+  if (!requestData.success) {
+    return responseUnprocessableEntity(res, requestData.error);
+  }
+
+  const match = await bcrypt.compare(requestData.data.code, appointment.code);
+  if (!match) {
+    return responseUnauthorized(res, "Unauthorized. Invalid Meeting Code");
+  }
+
+  return responseOk(res, 200, { success: true });
+});
+
 const getOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
 
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
@@ -49,11 +89,15 @@ const getOne = asyncHandler(async (req, res, next) => {
   if (!appointment) {
     return responseNotFounds(res, "Appointment not found");
   }
+
   return responseOk(res, 200, appointment);
 });
 
 const updateOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -61,6 +105,7 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (!isAppointmentExist) {
     return responseNotFounds(res, "Appointment not found");
   }
+  req.body.date = new Date(req.body.date);
   const requestData = storeAppointmentInputSchema.safeParse(req.body);
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
@@ -82,4 +127,5 @@ export default {
   store,
   getOne,
   updateOne,
+  compareAppointmentCode,
 };
