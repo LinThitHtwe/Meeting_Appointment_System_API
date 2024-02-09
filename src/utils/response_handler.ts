@@ -48,6 +48,16 @@ export const responseUnauthorized = (
   });
 };
 
+export const responseConflict = (
+  res: Response,
+  errorMessage: string = "Conflict"
+) => {
+  return res.status(409).json({
+    status: "fail",
+    message: errorMessage,
+  });
+};
+
 export const responseUnprocessableEntity = (
   res: Response,
   error: z.ZodError

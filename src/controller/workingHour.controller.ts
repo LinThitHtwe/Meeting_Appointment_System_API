@@ -9,11 +9,13 @@ import {
 } from "../services/workingHour.service";
 import {
   asyncHandler,
+  responseConflict,
   responseNotFounds,
   responseOk,
   responseUnprocessableEntity,
 } from "../utils/response_handler";
 import { sequelize } from "../../config/db";
+import { Op } from "sequelize";
 
 const index = asyncHandler(async (req, res, next) => {
   const workingHours = await getAllWorkingHour();
@@ -42,6 +44,16 @@ const store = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
+
+  const isWorkingHourAlreadyExist = await getAllWorkingHour({
+    where: {
+      startTime: requestData.data.startTime,
+      endTime: requestData.data.endTime,
+    },
+  });
+  if (isWorkingHourAlreadyExist.length > 0)
+    responseConflict(res, "Working Hour Already Exists");
+
   const workingHours = await sequelize.transaction(async (transaction) =>
     createWorkingHour(requestData.data)
   );
@@ -66,6 +78,17 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
+  const isWorkingHourAlreadyExist = await getAllWorkingHour({
+    where: {
+      id: {
+        [Op.not]: requestParams.data,
+      },
+      startTime: requestData.data.startTime,
+      endTime: requestData.data.endTime,
+    },
+  });
+  if (isWorkingHourAlreadyExist.length > 0)
+    responseConflict(res, "Working Hour Already Exists");
 
   const updatedWorkingHour = await sequelize.transaction(async (transaction) =>
     updateWorkingHour(requestData.data, {
