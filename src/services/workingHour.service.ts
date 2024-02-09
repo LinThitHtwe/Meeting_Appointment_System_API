@@ -1,4 +1,4 @@
-import { CreateOptions } from "sequelize";
+import { CreateOptions, FindOptions } from "sequelize";
 import { z } from "zod";
 import { WorkingHourType } from "./../../type";
 import workingHourRepository from "../repository/workingHour.repository";
@@ -10,9 +10,11 @@ export const storeWorkingHourInputSchema = z.object({
   endTime: z.string().refine((time) => timeFormatRegex.test(time)),
 });
 
-export const getAllWorkingHour = async () => {
+export const getAllWorkingHour = async (
+  options?: FindOptions<WorkingHoursAttributes> | any
+) => {
   try {
-    const workingHours = await workingHourRepository.findAll();
+    const workingHours = await workingHourRepository.findAll(options);
     return workingHours;
   } catch (error) {
     throw error;
