@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import {
   asyncHandler,
+  responseBadRequest,
+  responseConflict,
   responseNotFounds,
   responseOk,
   responseUnauthorized,
@@ -16,6 +18,7 @@ import {
   updateAppointment,
 } from "../services/appointment.service";
 import bcrypt from "bcrypt";
+import { Op } from "sequelize";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const appointments = await getAllAppointments();
@@ -25,9 +28,36 @@ const getAll = asyncHandler(async (req, res, next) => {
 const store = asyncHandler(async (req, res, next) => {
   try {
     req.body.date = new Date(req.body.date);
+    if (req.body.date < new Date()) {
+      return responseBadRequest(res, "Date cannot be lower than today date");
+    }
     const requestData = storeAppointmentInputSchema.safeParse(req.body);
     if (!requestData.success) {
       return responseUnprocessableEntity(res, requestData.error);
+    }
+
+    const isAppointmentALreadyExist = await getAllAppointments({
+      where: {
+        roomId: requestData.data.roomId,
+        date: requestData.data.date,
+        [Op.or]: [
+          {
+            [Op.and]: [
+              { startTime: { [Op.lte]: requestData.data.startTime } },
+              { endTime: { [Op.gte]: requestData.data.endTime } },
+            ],
+          },
+          {
+            [Op.and]: [
+              { startTime: { [Op.gte]: requestData.data.startTime } },
+              { startTime: { [Op.lte]: requestData.data.endTime } },
+            ],
+          },
+        ],
+      },
+    });
+    if (isAppointmentALreadyExist.length > 0) {
+      return responseConflict(res, "Appointment Already Exist");
     }
     const appointment = await sequelize.transaction(async (transaction) =>
       createAppointment(requestData.data, { transaction })
@@ -106,10 +136,43 @@ const updateOne = asyncHandler(async (req, res, next) => {
     return responseNotFounds(res, "Appointment not found");
   }
   req.body.date = new Date(req.body.date);
+  if (req.body.date < new Date()) {
+    return responseBadRequest(res, "Date cannot be lower than today date");
+  }
   const requestData = storeAppointmentInputSchema.safeParse(req.body);
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
+
+  const isAppointmentAlreadyExist = await getAllAppointments({
+    where: {
+      id: {
+        [Op.not]: requestParams.data,
+      },
+      roomId: requestData.data.roomId,
+      date: requestData.data.date,
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { startTime: { [Op.lte]: requestData.data.startTime } },
+            { endTime: { [Op.gte]: requestData.data.endTime } },
+          ],
+        },
+        {
+          [Op.and]: [
+            { startTime: { [Op.gte]: requestData.data.startTime } },
+            { startTime: { [Op.lte]: requestData.data.endTime } },
+          ],
+        },
+      ],
+    },
+  });
+
+  console.log("isAppointmentALreadyExist---", isAppointmentAlreadyExist);
+  if (isAppointmentAlreadyExist.length > 0) {
+    return responseConflict(res, "Appointment Already Exist");
+  }
+
   const appointment = await sequelize.transaction(async (transaction) =>
     updateAppointment(requestData.data, {
       transaction,

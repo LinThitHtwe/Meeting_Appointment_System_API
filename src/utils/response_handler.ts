@@ -38,6 +38,16 @@ export const responseNotFounds = (
   });
 };
 
+export const responseBadRequest = (
+  res: Response,
+  errorMessage: string = "Bad Request"
+) => {
+  return res.status(400).json({
+    status: "fail",
+    message: errorMessage,
+  });
+};
+
 export const responseUnauthorized = (
   res: Response,
   errorMessage: string = "Unauthorized"
