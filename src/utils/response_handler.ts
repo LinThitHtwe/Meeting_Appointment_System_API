@@ -38,6 +38,16 @@ export const responseNotFounds = (
   });
 };
 
+export const responseUnauthorized = (
+  res: Response,
+  errorMessage: string = "Unauthorized"
+) => {
+  return res.status(401).json({
+    status: "fail",
+    message: errorMessage,
+  });
+};
+
 export const responseUnprocessableEntity = (
   res: Response,
   error: z.ZodError
