@@ -17,13 +17,50 @@ import {
   storeAppointmentInputSchema,
   updateAppointment,
   getAppointmentByRoomId,
+  getAppointmentCount,
 } from "../services/appointment.service";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
+import Room from "../models/Room";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const appointments = await getAllAppointments();
   return responseOk(res, 200, appointments);
+});
+
+// const getCount = asyncHandler(async (req, res, next) => {
+
+//   const appointmentsCount = await getAppointmentCount({
+//     attributes: [
+//       'column1',
+//       [fn('count', col('column2')), 'count']
+//     ],
+//     group: ["column1"]
+//   })
+// })
+
+const getCount = asyncHandler(async (req, res, next) => {
+  const appointmentsCount = await getAppointmentCount({
+    attributes: [
+      [sequelize.literal('"Room"."name"'), 'roomName'],
+      [sequelize.fn('count', sequelize.col('room_Id')), 'count']
+    ],
+    include: [{
+      model: Room,
+      attributes: []
+    }],
+    group: ['Room.id', 'roomName']
+  });
+
+  console.log(appointmentsCount);
+
+
+  const formattedResult = Array.isArray(appointmentsCount) ?
+    appointmentsCount.map((entry: { roomName: any; count: any; }) => ({
+      [`${entry.roomName}`]: entry.count
+    })) : [];
+
+  return responseOk(res, 200, appointmentsCount);
 });
 
 const store = asyncHandler(async (req, res, next) => {
@@ -190,6 +227,7 @@ const updateOne = asyncHandler(async (req, res, next) => {
 
 export default {
   getAll,
+  getCount,
   store,
   getOne,
   updateOne,

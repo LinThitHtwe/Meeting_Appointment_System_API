@@ -1,6 +1,6 @@
 import { CreateOptions, FindOptions } from "sequelize";
 import appointmentRepository from "../repository/appointment.repository";
-import { AppointmentAttributes } from "../models/Appointment";
+import Appointment, { AppointmentAttributes } from "../models/Appointment";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import Department from "../models/Department";
@@ -48,6 +48,19 @@ export const getAllAppointments = async (options?: FindOptions<AppointmentAttrib
     throw error;
   }
 };
+
+export const getAppointmentCount = async (options?: FindOptions<AppointmentAttributes> | any) => {
+  try {
+    const appointmentsCount = await appointmentRepository.findCount({
+      include: [
+        { model: Appointment, attributes: ["name", "count"] },
+      ], ...options
+    })
+    return appointmentsCount;
+  } catch (error) {
+    throw error;
+  }
+}
 
 export const getAppointmentById = async (id: number) => {
   try {
