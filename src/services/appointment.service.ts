@@ -51,7 +51,12 @@ export const getAllAppointments = async (options?: FindOptions<AppointmentAttrib
 
 export const getAppointmentById = async (id: number) => {
   try {
-    const appointment = await appointmentRepository.findByPk(id);
+    const appointment = await appointmentRepository.findByPk(id, {
+      include: [
+        { model: Department, attributes: ["id", "name", "description"] },
+        { model: Room, attributes: ["id", "name", "description"] },
+      ],
+    });
     return appointment;
   } catch (error) {
     throw error;
