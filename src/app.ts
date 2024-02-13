@@ -15,6 +15,7 @@ const app: Application = express();
 // Department.sync();
 // Room.sync();
 // Account.sync();
+// WorkingHours.sync();
 // Appointment.sync();
 
 Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
