@@ -16,6 +16,7 @@ import {
   getAppointmentById,
   storeAppointmentInputSchema,
   updateAppointment,
+  getAppointmentByRoomId,
 } from "../services/appointment.service";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
@@ -70,10 +71,7 @@ const store = asyncHandler(async (req, res, next) => {
 });
 
 const compareAppointmentCode = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.id);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -106,10 +104,7 @@ const compareAppointmentCode = asyncHandler(async (req, res, next) => {
 });
 
 const getOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.id);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
 
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
@@ -122,12 +117,20 @@ const getOne = asyncHandler(async (req, res, next) => {
 
   return responseOk(res, 200, appointment);
 });
+const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.roomId);
+  if (!requestParams.success) {
+    return responseUnprocessableEntity(res, requestParams.error);
+  }
+  const appointment = await getAppointmentByRoomId(requestParams.data);
+  if (!appointment) {
+    return responseNotFounds(res, "Appointment not found");
+  }
 
+  return responseOk(res, 200, appointment);
+});
 const updateOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.id);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -191,4 +194,5 @@ export default {
   getOne,
   updateOne,
   compareAppointmentCode,
+  getAppointmentRoomId,
 };
