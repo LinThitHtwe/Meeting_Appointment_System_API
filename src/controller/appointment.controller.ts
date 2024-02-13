@@ -60,7 +60,7 @@ const getCount = asyncHandler(async (req, res, next) => {
       [`${entry.roomName}`]: entry.count
     })) : [];
 
-  return responseOk(res, 200, appointmentsCount);
+  return responseOk(res, 200, formattedResult);
 });
 
 const store = asyncHandler(async (req, res, next) => {
