@@ -34,9 +34,7 @@ export const storeAppointmentInputSchema = z.object({
     }),
 });
 
-export const getAllAppointments = async (
-  options?: FindOptions<AppointmentAttributes> | any
-) => {
+export const getAllAppointments = async (options?: FindOptions<AppointmentAttributes> | any) => {
   try {
     const appointments = await appointmentRepository.findAll({
       include: [
@@ -59,7 +57,14 @@ export const getAppointmentById = async (id: number) => {
     throw error;
   }
 };
-
+export const getAppointmentByRoomId = async (roomId: number) => {
+  try {
+    const appointment = await appointmentRepository.findByRoomId(roomId);
+    return appointment;
+  } catch (error) {
+    throw error;
+  }
+};
 export const createAppointment = async (
   input: z.infer<typeof storeAppointmentInputSchema>,
   options?: CreateOptions<AppointmentAttributes>
