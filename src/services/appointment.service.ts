@@ -53,9 +53,10 @@ export const getAppointmentCount = async (options?: FindOptions<AppointmentAttri
   try {
     const appointmentsCount = await appointmentRepository.findCount({
       include: [
-        { model: Appointment, attributes: ["name", "count"] },
+        { model: Appointment },
       ], ...options
     })
+
     return appointmentsCount;
   } catch (error) {
     throw error;
@@ -96,6 +97,7 @@ export const createAppointment = async (
     );
     return newAppointment;
   } catch (error) {
+    console.log('errrorr----', error)
     throw error;
   }
 };

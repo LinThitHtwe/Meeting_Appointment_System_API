@@ -22,45 +22,44 @@ import {
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 import Room from "../models/Room";
+import Department from "../models/Department";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const appointments = await getAllAppointments();
   return responseOk(res, 200, appointments);
 });
 
-// const getCount = asyncHandler(async (req, res, next) => {
-
-//   const appointmentsCount = await getAppointmentCount({
-//     attributes: [
-//       'column1',
-//       [fn('count', col('column2')), 'count']
-//     ],
-//     group: ["column1"]
-//   })
-// })
-
 const getCount = asyncHandler(async (req, res, next) => {
-  const appointmentsCount = await getAppointmentCount({
+  const roomCount = await getAppointmentCount({
     attributes: [
-      [sequelize.literal('"Room"."name"'), 'roomName'],
-      [sequelize.fn('count', sequelize.col('room_Id')), 'count']
+      [sequelize.literal('"room"."name"'), 'roomName'],
+      [sequelize.fn('count', sequelize.col('room_id')), 'roomCount'],
     ],
     include: [{
       model: Room,
       attributes: []
+    }, {
+      model: Department,
+      attributes: []
     }],
-    group: ['Room.id', 'roomName']
+    group: ['room.id', 'roomName']
   });
 
-  console.log(appointmentsCount);
+  const departmentCount = await getAppointmentCount({
+    attributes: [
+      [sequelize.literal('"department"."name"'), 'departmentName'],
+      [sequelize.fn('count', sequelize.col('department_id')), 'departmentCount'],
+    ],
+    include: [
+      {
+        model: Department,
+        attributes: []
+      }
+    ],
+    group: ['department.id', 'departmentName']
+  })
 
-
-  const formattedResult = Array.isArray(appointmentsCount) ?
-    appointmentsCount.map((entry: { roomName: any; count: any; }) => ({
-      [`${entry.roomName}`]: entry.count
-    })) : [];
-
-  return responseOk(res, 200, formattedResult);
+  return responseOk(res, 200, { roomCount, departmentCount });
 });
 
 const store = asyncHandler(async (req, res, next) => {

@@ -17,6 +17,7 @@ class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttrib
   declare isDeleted?: boolean;
   declare code: string;
   declare roomId: number;
+  declare departmentId: number;
 }
 Appointment.init(
   {
@@ -57,6 +58,10 @@ Appointment.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    departmentId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    }
   },
   {
     sequelize,
@@ -67,10 +72,10 @@ Appointment.init(
     underscored: true,
   }
 );
-// Appointment.belongsTo(Account, { foreignKey: "account_id" });
 
-// Account.hasMany(Appointment, { foreignKey: "account_id" });
-Appointment.belongsTo(Room, { foreignKey: "room_id" });
-// Room.hasMany(Appointment, { foreignKey: "room_id" });
+Appointment.belongsTo(Room, { foreignKey: "roomId" });
+Room.hasMany(Appointment);
+Appointment.belongsTo(Department, { foreignKey: "departmentId" });
+Department.hasMany(Appointment);
 
 export default Appointment;

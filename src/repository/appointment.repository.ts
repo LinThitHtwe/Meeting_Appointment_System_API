@@ -29,15 +29,7 @@ const findByPk = (identifier: Identifier, options?: FindOptions<AppointmentAttri
   Appointment.findByPk(identifier, options);
 
 const findCount = (options: FindOptions<AppointmentAttributes>) =>
-  Appointment.findAll(options).then(function (result) { });
-
-// {
-//   attributes: [
-//     'column1',
-//     [fn('count', col('column2')), 'count_of_column2']
-//   ],
-//     group: ["column1"]
-// }
+  Appointment.findAll(options);
 
 const findByRoomId = (roomId: number, options?: FindOptions<AppointmentAttributes>) =>
   Appointment.findAll({ where: { roomId }, ...options });
