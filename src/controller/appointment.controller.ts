@@ -32,7 +32,18 @@ const store = asyncHandler(async (req, res, next) => {
     if (req.body.date < new Date()) {
       return responseBadRequest(res, "Date cannot be lower than today date");
     }
-    const requestData = storeAppointmentInputSchema.safeParse(req.body);
+    console.log(typeof req.body.departmentId);
+    const departmentToNumber = parseInt(req.body.departmentId, 10);
+    const roomToNumber = parseInt(req.body.roomId, 10);
+    const staffToNumber = parseInt(req.body.staffId, 10);
+    const data = {
+      ...req.body,
+      departmentId: departmentToNumber,
+      roomId: roomToNumber,
+      staffId: staffToNumber,
+    };
+    console.log(data);
+    const requestData = storeAppointmentInputSchema.safeParse(data);
     if (!requestData.success) {
       return responseUnprocessableEntity(res, requestData.error);
     }
@@ -71,12 +82,16 @@ const store = asyncHandler(async (req, res, next) => {
 });
 
 const compareAppointmentCode = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const id = parseInt(req.params.id, 10);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
+  console.log("helloo---------");
+  console.log(req.body);
 
   const appointment = await getAppointmentById(requestParams.data);
+  // console.log("Hello,appointment", appointment);
   if (!appointment) {
     return responseNotFounds(res, "Appointment not found");
   }
@@ -91,6 +106,7 @@ const compareAppointmentCode = asyncHandler(async (req, res, next) => {
         }),
     })
     .safeParse(req.body);
+
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
