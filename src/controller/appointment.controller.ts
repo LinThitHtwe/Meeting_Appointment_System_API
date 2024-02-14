@@ -17,13 +17,49 @@ import {
   storeAppointmentInputSchema,
   updateAppointment,
   getAppointmentByRoomId,
+  getAppointmentCount,
 } from "../services/appointment.service";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
+import Room from "../models/Room";
+import Department from "../models/Department";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const appointments = await getAllAppointments();
   return responseOk(res, 200, appointments);
+});
+
+const getCount = asyncHandler(async (req, res, next) => {
+  const roomCount = await getAppointmentCount({
+    attributes: [
+      [sequelize.literal('"room"."name"'), 'roomName'],
+      [sequelize.fn('count', sequelize.col('room_id')), 'roomCount'],
+    ],
+    include: [{
+      model: Room,
+      attributes: []
+    }, {
+      model: Department,
+      attributes: []
+    }],
+    group: ['room.id', 'roomName']
+  });
+
+  const departmentCount = await getAppointmentCount({
+    attributes: [
+      [sequelize.literal('"department"."name"'), 'departmentName'],
+      [sequelize.fn('count', sequelize.col('department_id')), 'departmentCount'],
+    ],
+    include: [
+      {
+        model: Department,
+        attributes: []
+      }
+    ],
+    group: ['department.id', 'departmentName']
+  })
+
+  return responseOk(res, 200, { roomCount, departmentCount });
 });
 
 const store = asyncHandler(async (req, res, next) => {
@@ -190,6 +226,7 @@ const updateOne = asyncHandler(async (req, res, next) => {
 
 export default {
   getAll,
+  getCount,
   store,
   getOne,
   updateOne,

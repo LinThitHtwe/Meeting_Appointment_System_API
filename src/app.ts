@@ -12,17 +12,6 @@ import WorkingHours from "./models/WorkingHours";
 import router from "./routes";
 
 const app: Application = express();
-// Department.sync();
-// Room.sync();
-// Account.sync();
-// WorkingHours.sync();
-// Appointment.sync();
-
-Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
-Room.hasMany(Appointment);
-
-Appointment.belongsTo(Department, { constraints: true, onDelete: "CASCADE" });
-Department.hasMany(Appointment);
 
 testDbConnection()
   .then(() => {
@@ -30,17 +19,7 @@ testDbConnection()
     Room.sync();
     Account.sync();
     WorkingHours.sync();
-
-    Appointment.sync().then(() => {
-      Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
-      Room.hasMany(Appointment);
-
-      Appointment.belongsTo(Department, {
-        constraints: true,
-        onDelete: "CASCADE",
-      });
-      Department.hasMany(Appointment);
-    });
+    Appointment.sync();
   })
   .catch((error: Error) => {
     console.error("Unable to connect to the database:", error);

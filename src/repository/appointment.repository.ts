@@ -1,4 +1,4 @@
-import { CreateOptions, FindOptions, Identifier } from "sequelize";
+import { CreateOptions, FindOptions, Identifier, col, fn } from "sequelize";
 import Appointment, { AppointmentAttributes } from "../models/Appointment";
 
 type createAppointment = {
@@ -28,6 +28,9 @@ const findAll = (options?: FindOptions<AppointmentAttributes>) => Appointment.fi
 const findByPk = (identifier: Identifier, options?: FindOptions<AppointmentAttributes>) =>
   Appointment.findByPk(identifier, options);
 
+const findCount = (options: FindOptions<AppointmentAttributes>) =>
+  Appointment.findAll(options);
+
 const findByRoomId = (roomId: number, options?: FindOptions<AppointmentAttributes>) =>
   Appointment.findAll({ where: { roomId }, ...options });
 
@@ -42,4 +45,4 @@ const update = (data: updateAppointment, options?: CreateOptions<AppointmentAttr
     ...options,
   });
 
-export default { findAll, findByPk, create, update, findByRoomId };
+export default { findAll, findCount, findByPk, create, update, findByRoomId };
