@@ -10,12 +10,14 @@ import Account from "./models/Admin";
 import Appointment from "./models/Appointment";
 import WorkingHours from "./models/WorkingHours";
 import router from "./routes";
+import Holiday from "./models/Holiday";
 require("dotenv").config();
 console.log(process.env.CLIENT_PORT);
 const app: Application = express();
 
 testDbConnection()
   .then(() => {
+    Holiday.sync();
     Department.sync();
     Room.sync();
     Account.sync();
