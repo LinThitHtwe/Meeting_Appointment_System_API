@@ -10,7 +10,8 @@ import Account from "./models/Admin";
 import Appointment from "./models/Appointment";
 import WorkingHours from "./models/WorkingHours";
 import router from "./routes";
-
+require("dotenv").config();
+console.log(process.env.CLIENT_PORT);
 const app: Application = express();
 
 testDbConnection()
@@ -28,7 +29,7 @@ testDbConnection()
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://10.1.40.184:3000",
+    origin: process.env.CLIENT_PORT,
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
