@@ -32,32 +32,38 @@ const getAll = asyncHandler(async (req, res, next) => {
 const getCount = asyncHandler(async (req, res, next) => {
   const roomCount = await getAppointmentCount({
     attributes: [
-      [sequelize.literal('"room"."name"'), 'roomName'],
-      [sequelize.fn('count', sequelize.col('room_id')), 'roomCount'],
+      [sequelize.literal('"room"."name"'), "roomName"],
+      [sequelize.fn("count", sequelize.col("room_id")), "roomCount"],
     ],
-    include: [{
-      model: Room,
-      attributes: []
-    }, {
-      model: Department,
-      attributes: []
-    }],
-    group: ['room.id', 'roomName']
+    include: [
+      {
+        model: Room,
+        attributes: [],
+      },
+      {
+        model: Department,
+        attributes: [],
+      },
+    ],
+    group: ["room.id", "roomName"],
   });
 
   const departmentCount = await getAppointmentCount({
     attributes: [
-      [sequelize.literal('"department"."name"'), 'departmentName'],
-      [sequelize.fn('count', sequelize.col('department_id')), 'departmentCount'],
+      [sequelize.literal('"department"."name"'), "departmentName"],
+      [
+        sequelize.fn("count", sequelize.col("department_id")),
+        "departmentCount",
+      ],
     ],
     include: [
       {
         model: Department,
-        attributes: []
-      }
+        attributes: [],
+      },
     ],
-    group: ['department.id', 'departmentName']
-  })
+    group: ["department.id", "departmentName"],
+  });
 
   return responseOk(res, 200, { roomCount, departmentCount });
 });
@@ -123,11 +129,7 @@ const compareAppointmentCode = asyncHandler(async (req, res, next) => {
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
-  console.log("helloo---------");
-  console.log(req.body);
-
   const appointment = await getAppointmentById(requestParams.data);
-  // console.log("Hello,appointment", appointment);
   if (!appointment) {
     return responseNotFounds(res, "Appointment not found");
   }
@@ -156,7 +158,10 @@ const compareAppointmentCode = asyncHandler(async (req, res, next) => {
 });
 
 const getOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
 
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
@@ -170,7 +175,10 @@ const getOne = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, appointment);
 });
 const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.roomId);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.roomId);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -182,7 +190,10 @@ const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, appointment);
 });
 const updateOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
