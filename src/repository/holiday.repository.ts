@@ -25,4 +25,11 @@ const update = (
     ...options,
   });
 
-export default { findAll, findByPk, create, update };
+const remove = (id: number) =>
+  Holiday.destroy({
+    where: {
+      id: id,
+    },
+  });
+
+export default { findAll, findByPk, create, update, remove };

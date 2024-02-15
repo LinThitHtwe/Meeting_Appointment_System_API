@@ -23,6 +23,7 @@ import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 import Room from "../models/Room";
 import Department from "../models/Department";
+import { getAllHoliday } from "../services/holiday.service";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const appointments = await getAllAppointments();
@@ -74,7 +75,14 @@ const store = asyncHandler(async (req, res, next) => {
     if (req.body.date < new Date()) {
       return responseBadRequest(res, "Date cannot be lower than today date");
     }
-    console.log(typeof req.body.departmentId);
+    const isHolidayAlreadyExist = await getAllHoliday({
+      where: {
+        date: req.body.date,
+      },
+    });
+    if (isHolidayAlreadyExist.length > 0) {
+      responseConflict(res, "Cannot Schedule an Appointment on Holidays");
+    }
     const departmentToNumber = parseInt(req.body.departmentId, 10);
     const roomToNumber = parseInt(req.body.roomId, 10);
     const staffToNumber = parseInt(req.body.staffId, 10);
@@ -84,7 +92,6 @@ const store = asyncHandler(async (req, res, next) => {
       roomId: roomToNumber,
       staffId: staffToNumber,
     };
-    console.log(data);
     const requestData = storeAppointmentInputSchema.safeParse(data);
     if (!requestData.success) {
       return responseUnprocessableEntity(res, requestData.error);
@@ -174,6 +181,7 @@ const getOne = asyncHandler(async (req, res, next) => {
 
   return responseOk(res, 200, appointment);
 });
+
 const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
   const requestParams = z
     .number({ coerce: true })
@@ -205,9 +213,18 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (req.body.date < new Date()) {
     return responseBadRequest(res, "Date cannot be lower than today date");
   }
+
   const requestData = storeAppointmentInputSchema.safeParse(req.body);
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
+  }
+  const isHolidayAlreadyExist = await getAllHoliday({
+    where: {
+      date: requestData.data.date,
+    },
+  });
+  if (isHolidayAlreadyExist.length > 0) {
+    responseConflict(res, "Cannot Schedule an Appointment on Holidays");
   }
 
   const isAppointmentAlreadyExist = await getAllAppointments({
