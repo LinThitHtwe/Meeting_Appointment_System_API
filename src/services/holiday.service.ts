@@ -49,3 +49,12 @@ export const updateHoliday = async (
     throw error;
   }
 };
+
+export const removeHoliday = async (id: number) => {
+  try {
+    const removedHoliday = await holidayRepository.remove(id);
+    return removedHoliday;
+  } catch (error) {
+    throw error;
+  }
+};

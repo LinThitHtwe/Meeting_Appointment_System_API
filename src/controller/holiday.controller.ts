@@ -5,6 +5,7 @@ import {
   getAllHoliday,
   getHolidayById,
   updateHoliday,
+  removeHoliday,
 } from "../services/holiday.service";
 import {
   asyncHandler,
@@ -101,4 +102,21 @@ const updateOne = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, updatedHoliday);
 });
 
-export default { index, store, show, updateOne };
+const remove = asyncHandler(async (req, res, next) => {
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
+  if (!requestParams.success) {
+    return responseUnprocessableEntity(res, requestParams.error);
+  }
+  const isHolidayExist = await getHolidayById(requestParams.data);
+  if (!isHolidayExist) {
+    return responseNotFounds(res, "Holiday not found");
+  }
+
+  const removedHoliday = await removeHoliday(requestParams.data);
+  return responseOk(res, 200, removedHoliday);
+});
+
+export default { index, store, show, updateOne, remove };
