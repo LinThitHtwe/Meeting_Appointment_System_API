@@ -10,37 +10,19 @@ import Account from "./models/Admin";
 import Appointment from "./models/Appointment";
 import WorkingHours from "./models/WorkingHours";
 import router from "./routes";
-
+import Holiday from "./models/Holiday";
+require("dotenv").config();
+console.log(process.env.CLIENT_PORT);
 const app: Application = express();
-// Department.sync();
-// Room.sync();
-// Account.sync();
-// WorkingHours.sync();
-// Appointment.sync();
-
-Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
-Room.hasMany(Appointment);
-
-Appointment.belongsTo(Department, { constraints: true, onDelete: "CASCADE" });
-Department.hasMany(Appointment);
 
 testDbConnection()
   .then(() => {
+    Holiday.sync();
     Department.sync();
     Room.sync();
     Account.sync();
     WorkingHours.sync();
-
-    Appointment.sync().then(() => {
-      Appointment.belongsTo(Room, { constraints: true, onDelete: "CASCADE" });
-      Room.hasMany(Appointment);
-
-      Appointment.belongsTo(Department, {
-        constraints: true,
-        onDelete: "CASCADE",
-      });
-      Department.hasMany(Appointment);
-    });
+    Appointment.sync();
   })
   .catch((error: Error) => {
     console.error("Unable to connect to the database:", error);
@@ -49,7 +31,7 @@ testDbConnection()
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_PORT,
     credentials: true,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
