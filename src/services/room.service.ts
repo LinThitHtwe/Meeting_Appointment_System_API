@@ -1,6 +1,6 @@
 import { z } from "zod";
 import roomRepository from "../repository/room.repository";
-import { CreateOptions } from "sequelize";
+import { CreateOptions, FindOptions } from "sequelize";
 import { RoomAttributes } from "../models/Room";
 
 export const storeRoomInputSchema = z.object({
@@ -18,7 +18,7 @@ export const storeRoomInputSchema = z.object({
     }),
 });
 
-export const getAllRooms = async () => {
+export const getAllRooms = async (options?: FindOptions<RoomAttributes>) => {
   try {
     const rooms = await roomRepository.findAll();
     return rooms;

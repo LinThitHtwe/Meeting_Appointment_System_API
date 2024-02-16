@@ -97,27 +97,22 @@ const store = asyncHandler(async (req, res, next) => {
       return responseUnprocessableEntity(res, requestData.error);
     }
 
-    const isAppointmentALreadyExist = await getAllAppointments({
+    const isAppointmentAlreadyExist = await getAllAppointments({
       where: {
         roomId: requestData.data.roomId,
         date: requestData.data.date,
-        [Op.or]: [
+        [Op.and]: [
           {
             [Op.and]: [
-              { startTime: { [Op.lte]: requestData.data.startTime } },
-              { endTime: { [Op.gte]: requestData.data.endTime } },
-            ],
-          },
-          {
-            [Op.and]: [
-              { startTime: { [Op.gte]: requestData.data.startTime } },
-              { startTime: { [Op.lte]: requestData.data.endTime } },
+              { startTime: { [Op.lt]: requestData.data.endTime } },
+              { endTime: { [Op.gt]: requestData.data.startTime } },
             ],
           },
         ],
       },
     });
-    if (isAppointmentALreadyExist.length > 0) {
+
+    if (isAppointmentAlreadyExist.length > 0) {
       return responseConflict(res, "Appointment Already Exist");
     }
     const appointment = await sequelize.transaction(async (transaction) =>
@@ -234,24 +229,17 @@ const updateOne = asyncHandler(async (req, res, next) => {
       },
       roomId: requestData.data.roomId,
       date: requestData.data.date,
-      [Op.or]: [
+      [Op.and]: [
         {
           [Op.and]: [
-            { startTime: { [Op.lte]: requestData.data.startTime } },
-            { endTime: { [Op.gte]: requestData.data.endTime } },
-          ],
-        },
-        {
-          [Op.and]: [
-            { startTime: { [Op.gte]: requestData.data.startTime } },
-            { startTime: { [Op.lte]: requestData.data.endTime } },
+            { startTime: { [Op.lt]: requestData.data.endTime } },
+            { endTime: { [Op.gt]: requestData.data.startTime } },
           ],
         },
       ],
     },
   });
 
-  console.log("isAppointmentALreadyExist---", isAppointmentAlreadyExist);
   if (isAppointmentAlreadyExist.length > 0) {
     return responseConflict(res, "Appointment Already Exist");
   }
