@@ -117,6 +117,7 @@ const getOne = asyncHandler(async (req, res, next) => {
 
   return responseOk(res, 200, appointment);
 });
+
 const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
   const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.roomId);
   if (!requestParams.success) {
