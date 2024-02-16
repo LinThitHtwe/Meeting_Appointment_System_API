@@ -17,7 +17,7 @@ const findByPk = (
 const findByUsername = (
   username: string,
   options?: FindOptions<AccountAttributes>
-) => Account.findOne({where: {username}, ...options});
+) => Account.findOne(username);
 
 const create = (
   data: createAccount,

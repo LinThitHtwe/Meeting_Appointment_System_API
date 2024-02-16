@@ -24,6 +24,7 @@ const jwtSign = jwt.sign;
 export const login = async (username:string, password:string) => {
   try {
     const account = await accountRepository.findByUsername(username);
+    console.log("🚀 ~ login ~ account:", account)
     if (!account) {
       throw new Error("Incorrect username");
     }

@@ -8,7 +8,8 @@ import {
 
 const userLogin = asyncHandler(async (req,res,next) => {
     const reqBody = req.body; 
-    if (reqBody.username && reqBody.password) {
+    console.log("🚀 ~ userLogin ~ reqBody:", reqBody)
+    if (!reqBody.username || !reqBody.password) {
         return responseBadRequest(res, "Invalid input data!");
     }
     const user = await login(reqBody.username,reqBody.password);
