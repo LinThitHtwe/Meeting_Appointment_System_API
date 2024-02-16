@@ -14,6 +14,10 @@ const findByPk = (
   options?: FindOptions<AccountAttributes>
 ) => Account.findByPk(identifier, options);
 
+const findByUsername = (
+  username: string
+) => Account.findOne({where: {username: username}});
+
 const create = (
   data: createAccount,
   options?: CreateOptions<AccountAttributes>
@@ -30,4 +34,4 @@ const update = (
     ...options,
   });
 
-export default { findAll, findByPk, create, update };
+export default { findAll, findByPk, findByUsername, create, update };

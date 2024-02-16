@@ -2,6 +2,7 @@ import { z } from "zod";
 import accountRepository from "../repository/account.repository";
 import { AccountAttributes } from "../models/Admin";
 import { CreateOptions } from "sequelize";
+import jwt from 'jsonwebtoken';
 
 export const storeAccountInputSchema = z.object({
   username: z
@@ -17,6 +18,26 @@ export const storeAccountInputSchema = z.object({
       message: "Password cannot be blank or contain only whitespace",
     }),
 });
+
+const jwtSign = jwt.sign;
+
+export const login = async (username:string, password:string) => {
+  try {
+    const account = await accountRepository.findByUsername(username);
+    console.log("🚀 ~ login ~ account:", account)
+    if (!account) {
+      throw new Error("Incorrect username");
+    }
+    if (account?.password !== password) {
+      throw new Error("Incorrect password");
+    }
+    const token = await jwtSign({username: account.username}, "very_strong_key", {expiresIn: "48h"});
+    const response = {account: account, token: token};
+    return response;
+  } catch (error) {
+    throw error
+  }
+}
 
 export const getAllAccounts = async () => {
   try {
