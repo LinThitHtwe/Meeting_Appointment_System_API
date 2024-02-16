@@ -14,7 +14,7 @@ const userLogin = asyncHandler(async (req,res,next) => {
     }
     const user = await login(reqBody.username,reqBody.password);
     if (user) {
-        return responseOk(res, 200);
+        return responseOk(res, 200, user);
     }
     return responseNotFounds(res,"Log in failed!");
 })
