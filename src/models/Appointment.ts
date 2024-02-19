@@ -61,7 +61,7 @@ Appointment.init(
     departmentId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    }
+    },
   },
   {
     sequelize,
