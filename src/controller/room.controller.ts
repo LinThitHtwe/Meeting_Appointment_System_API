@@ -14,7 +14,8 @@ import {
 } from "../services/room.service";
 import { sequelize } from "../../config/db";
 import { z } from "zod";
-import { Op, Sequelize } from "sequelize";
+import { Op, Sequelize, WhereOptions } from "sequelize";
+import { RoomAttributes } from "../models/Room";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const rooms = await getAllRooms();
@@ -32,7 +33,7 @@ const store = asyncHandler(async (req, res, next) => {
       Sequelize.fn("LOWER", requestData.data.name)
     ),
   });
-
+  console.log("rooommm----", isRoomAlreadyExist);
   if (isRoomAlreadyExist.length > 0) {
     return responseConflict(res, "Room Already Exist");
   }
@@ -89,6 +90,7 @@ const updateOne = asyncHandler(async (req, res, next) => {
       ],
     },
   });
+  console.log("-------", isRoomAlreadyExist);
   if (isRoomAlreadyExist.length > 0) {
     return responseConflict(res, "Room Already Exist");
   }

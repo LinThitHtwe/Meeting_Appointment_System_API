@@ -18,7 +18,7 @@ const findByPk = (
 ) => WorkingHours.findByPk(identifier, options);
 
 const update = (
-  data: { startTime?: string; endTime?: string },
+  data: { startTime?: string; endTime?: string; isActive?: boolean },
   options?: CreateOptions<WorkingHoursAttributes> | any
 ) =>
   WorkingHours.update(data, {
