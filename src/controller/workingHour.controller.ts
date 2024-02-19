@@ -1,4 +1,3 @@
-import { WorkingHourType } from "../../type";
 import { z } from "zod";
 import {
   storeWorkingHourInputSchema,
@@ -6,6 +5,7 @@ import {
   getAllWorkingHour,
   getWorkingHourById,
   updateWorkingHour,
+  changeWorkingHourStatus,
   deleteWorkingHour,
 } from "../services/workingHour.service";
 import {
@@ -40,7 +40,10 @@ const show = asyncHandler(async (req, res, next) => {
 });
 
 const store = asyncHandler(async (req, res, next) => {
-  const requestData = storeWorkingHourInputSchema.safeParse(req.body);
+  const requestData = storeWorkingHourInputSchema.safeParse({
+    ...req.body,
+    isActive: false,
+  });
 
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
@@ -124,4 +127,45 @@ const updateOne = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, updatedWorkingHour);
 });
 
-export default { index, store, show, updateOne, deleteOne };
+
+const activateWorkingHour = asyncHandler(async (req, res, next) => {
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
+
+  if (!requestParams.success) {
+    return responseUnprocessableEntity(res, requestParams.error);
+  }
+
+  const isWorkingHourExist = await getWorkingHourById(requestParams.data);
+  if (!isWorkingHourExist) {
+    return responseNotFounds(res, "Working Hour not found");
+  }
+  const activeWorkingHour = await sequelize.transaction(async (transaction) => {
+    await changeWorkingHourStatus(
+      { isActive: true },
+      {
+        transaction,
+        where: {
+          id: requestParams.data,
+        },
+      }
+    );
+
+    await changeWorkingHourStatus(
+      { isActive: false },
+      {
+        transaction,
+        where: {
+          id: {
+            [Op.ne]: requestParams.data,
+          },
+        },
+      }
+    );
+  });
+  return responseOk(res, 201, { status: "successfully updated" });
+});
+
+export default { index, store, show, updateOne, deleteOne,activateWorkingHour };

@@ -18,6 +18,7 @@ class WorkingHours extends Model<
   declare startTime: string;
   declare endTime: string;
   declare isDeleted?: boolean;
+  declare isActive: boolean;
 }
 WorkingHours.init(
   {
@@ -34,9 +35,13 @@ WorkingHours.init(
       type: DataTypes.TIME,
       allowNull: false,
     },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+    },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
+      defaultValue: false,
     },
   },
   {

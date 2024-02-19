@@ -20,7 +20,7 @@ export const storeRoomInputSchema = z.object({
 
 export const getAllRooms = async (options?: FindOptions<RoomAttributes>) => {
   try {
-    const rooms = await roomRepository.findAll();
+    const rooms = await roomRepository.findAll(options);
     return rooms;
   } catch (error) {
     throw error;
