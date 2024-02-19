@@ -6,5 +6,6 @@ route.get("/", workingHourController.index);
 route.post("/", workingHourController.store);
 route.get("/:id", workingHourController.show);
 route.patch("/:id", workingHourController.updateOne);
+route.delete("/:id", workingHourController.deleteOne);
 
 export default route;
