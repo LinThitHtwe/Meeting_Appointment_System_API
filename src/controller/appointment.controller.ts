@@ -24,6 +24,7 @@ import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 import Room from "../models/Room";
 import Department from "../models/Department";
+import { getAllHoliday } from "../services/holiday.service";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const appointments = await getAllAppointments();
@@ -52,7 +53,10 @@ const getCount = asyncHandler(async (req, res, next) => {
   const departmentCount = await getAppointmentCount({
     attributes: [
       [sequelize.literal('"department"."name"'), "departmentName"],
-      [sequelize.fn("count", sequelize.col("department_id")), "departmentCount"],
+      [
+        sequelize.fn("count", sequelize.col("department_id")),
+        "departmentCount",
+      ],
     ],
     include: [
       {
@@ -72,7 +76,14 @@ const store = asyncHandler(async (req, res, next) => {
     if (req.body.date < new Date()) {
       return responseBadRequest(res, "Date cannot be lower than today date");
     }
-    console.log(typeof req.body.departmentId);
+    const isHolidayAlreadyExist = await getAllHoliday({
+      where: {
+        date: req.body.date,
+      },
+    });
+    if (isHolidayAlreadyExist.length > 0) {
+      responseConflict(res, "Cannot Schedule an Appointment on Holidays");
+    }
     const departmentToNumber = parseInt(req.body.departmentId, 10);
     const roomToNumber = parseInt(req.body.roomId, 10);
     const staffToNumber = parseInt(req.body.staffId, 10);
@@ -82,33 +93,27 @@ const store = asyncHandler(async (req, res, next) => {
       roomId: roomToNumber,
       staffId: staffToNumber,
     };
-    console.log(data);
     const requestData = storeAppointmentInputSchema.safeParse(data);
     if (!requestData.success) {
       return responseUnprocessableEntity(res, requestData.error);
     }
 
-    const isAppointmentALreadyExist = await getAllAppointments({
+    const isAppointmentAlreadyExist = await getAllAppointments({
       where: {
         roomId: requestData.data.roomId,
         date: requestData.data.date,
-        [Op.or]: [
+        [Op.and]: [
           {
             [Op.and]: [
-              { startTime: { [Op.lte]: requestData.data.startTime } },
-              { endTime: { [Op.gte]: requestData.data.endTime } },
-            ],
-          },
-          {
-            [Op.and]: [
-              { startTime: { [Op.gte]: requestData.data.startTime } },
-              { startTime: { [Op.lte]: requestData.data.endTime } },
+              { startTime: { [Op.lt]: requestData.data.endTime } },
+              { endTime: { [Op.gt]: requestData.data.startTime } },
             ],
           },
         ],
       },
     });
-    if (isAppointmentALreadyExist.length > 0) {
+
+    if (isAppointmentAlreadyExist.length > 0) {
       return responseConflict(res, "Appointment Already Exist");
     }
     const appointment = await sequelize.transaction(async (transaction) =>
@@ -127,11 +132,7 @@ const compareAppointmentCode = asyncHandler(async (req, res, next) => {
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
-  console.log("helloo---------");
-  console.log(req.body);
-
   const appointment = await getAppointmentById(requestParams.data);
-  // console.log("Hello,appointment", appointment);
   if (!appointment) {
     return responseNotFounds(res, "Appointment not found");
   }
@@ -160,7 +161,10 @@ const compareAppointmentCode = asyncHandler(async (req, res, next) => {
 });
 
 const getOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.id);
 
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
@@ -173,8 +177,12 @@ const getOne = asyncHandler(async (req, res, next) => {
 
   return responseOk(res, 200, appointment);
 });
+
 const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
-  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.roomId);
+  const requestParams = z
+    .number({ coerce: true })
+    .positive()
+    .safeParse(req.params.roomId);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -190,6 +198,7 @@ const updateOne = asyncHandler(async (req, res, next) => {
   console.log(id, req.body);
   const requestParams = z.number({ coerce: true }).positive().safeParse(id);
   console.log(requestParams);
+
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -212,9 +221,16 @@ const updateOne = asyncHandler(async (req, res, next) => {
   };
   const requestData = storeAppointmentInputSchema.safeParse(data);
   console.log("requestData", requestData);
-
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
+  }
+  const isHolidayAlreadyExist = await getAllHoliday({
+    where: {
+      date: requestData.data.date,
+    },
+  });
+  if (isHolidayAlreadyExist.length > 0) {
+    responseConflict(res, "Cannot Schedule an Appointment on Holidays");
   }
 
   const isAppointmentAlreadyExist = await getAllAppointments({
@@ -224,24 +240,17 @@ const updateOne = asyncHandler(async (req, res, next) => {
       },
       roomId: requestData.data.roomId,
       date: requestData.data.date,
-      [Op.or]: [
+      [Op.and]: [
         {
           [Op.and]: [
-            { startTime: { [Op.lte]: requestData.data.startTime } },
-            { endTime: { [Op.gte]: requestData.data.endTime } },
-          ],
-        },
-        {
-          [Op.and]: [
-            { startTime: { [Op.gte]: requestData.data.startTime } },
-            { startTime: { [Op.lte]: requestData.data.endTime } },
+            { startTime: { [Op.lt]: requestData.data.endTime } },
+            { endTime: { [Op.gt]: requestData.data.startTime } },
           ],
         },
       ],
     },
   });
 
-  console.log("isAppointmentALreadyExist---", isAppointmentAlreadyExist);
   if (isAppointmentAlreadyExist.length > 0) {
     return responseConflict(res, "Appointment Already Exist");
   }
