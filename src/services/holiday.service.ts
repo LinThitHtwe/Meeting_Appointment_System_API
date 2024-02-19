@@ -18,9 +18,9 @@ export const getAllHoliday = async (
   }
 };
 
-export const createHoliday = async (data: { date: Date }) => {
+export const createHoliday = async (date: Date) => {
   try {
-    const holiday = await holidayRepository.create(data);
+    const holiday = await holidayRepository.create({ date });
     return holiday;
   } catch (error) {
     throw error;

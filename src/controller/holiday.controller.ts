@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { date, z } from "zod";
 import {
   storeHolidayInputSchema,
   createHoliday,
@@ -9,6 +9,7 @@ import {
 } from "../services/holiday.service";
 import {
   asyncHandler,
+  responseBadRequest,
   responseConflict,
   responseNotFounds,
   responseOk,
@@ -39,26 +40,39 @@ const show = asyncHandler(async (req, res, next) => {
 });
 
 const store = asyncHandler(async (req, res, next) => {
-  req.body.date = new Date(req.body.date);
-  const requestData = storeHolidayInputSchema.safeParse(req.body);
+  try {
+    const newHolidays = req.body.data.newHolidays.map((date: string) => new Date(date));
+    const removedHolidays = req.body.data.removedHolidays.map((date: string) => new Date(date));
 
-  if (!requestData.success) {
-    return responseUnprocessableEntity(res, requestData.error);
-  }
+    await Promise.all(newHolidays.map(async (date: Date) => {
+      const isHolidayAlreadyExist = await getAllHoliday({
+        where: {
+          date: date,
+        },
+      });
+      if (isHolidayAlreadyExist.length === 0) {
+        await createHoliday(date);
+      }
+    }));
 
-  const isHolidayAlreadyExist = await getAllHoliday({
-    where: {
-      date: requestData.data.date,
-    },
-  });
-  if (isHolidayAlreadyExist.length > 0)
-    responseConflict(res, "Holiday Already Exists");
+    await Promise.all(removedHolidays.map(async (date: Date) => {
+      const isHolidayAlreadyExist = await getAllHoliday({
+        where: {
+          date: date,
+        },
+      });
+      if (isHolidayAlreadyExist.length > 0) {
+        console.log("isHolidayExist", isHolidayAlreadyExist);
+        const holidayId = isHolidayAlreadyExist[0].id;
+        if (holidayId !== undefined) {
+          await removeHoliday(holidayId);
+        }
+      }
+    }));
 
-  const holidays = await sequelize.transaction(async (transaction) =>
-    createHoliday(requestData.data)
-  );
-  if (holidays) {
-    return responseOk(res, 201, holidays);
+    return responseOk(res, 201, { message: "Holidays changes save successful." });
+  } catch (error) {
+    return responseBadRequest(res, "Save changes fail");
   }
 });
 
