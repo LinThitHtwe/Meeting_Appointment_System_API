@@ -34,6 +34,28 @@ export const storeAppointmentInputSchema = z.object({
     }),
 });
 
+export const updateAppointmentInputSchema = z.object({
+  date: z.date().refine((data) => !isNaN(data.getTime()), {
+    message: "Date must be a valid date",
+  }),
+  startTime: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Start time cannot be blank or contain only whitespace",
+    }),
+  endTime: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Start time cannot be blank or contain only whitespace",
+    }),
+  departmentId: z.number(),
+  description: z.string(),
+  roomId: z.number(),
+  staffId: z.number(),
+});
+
 export const getAllAppointments = async (options?: FindOptions<AppointmentAttributes> | any) => {
   try {
     const appointments = await appointmentRepository.findAll({
@@ -52,16 +74,15 @@ export const getAllAppointments = async (options?: FindOptions<AppointmentAttrib
 export const getAppointmentCount = async (options?: FindOptions<AppointmentAttributes> | any) => {
   try {
     const appointmentsCount = await appointmentRepository.findCount({
-      include: [
-        { model: Appointment },
-      ], ...options
-    })
+      include: [{ model: Appointment }],
+      ...options,
+    });
 
     return appointmentsCount;
   } catch (error) {
     throw error;
   }
-}
+};
 
 export const getAppointmentById = async (id: number) => {
   try {
@@ -97,7 +118,7 @@ export const createAppointment = async (
     );
     return newAppointment;
   } catch (error) {
-    console.log('errrorr----', error)
+    console.log("errrorr----", error);
     throw error;
   }
 };
@@ -108,6 +129,7 @@ export const updateAppointment = async (
 ) => {
   try {
     const bcryptCode = await bcrypt.hash(input.code, 12);
+    console.log("input", input);
     const updatedAppointment = appointmentRepository.update(
       { ...input, code: bcryptCode },
       options

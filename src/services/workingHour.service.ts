@@ -40,6 +40,15 @@ export const getWorkingHourById = async (id: number) => {
   }
 };
 
+export const deleteWorkingHour = async (id: number) => {
+  try {
+    const workingHour = await workingHourRepository.remove(id);
+    return workingHour;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const updateWorkingHour = async (
   data: {
     startTime: string;

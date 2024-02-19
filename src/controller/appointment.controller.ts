@@ -18,6 +18,7 @@ import {
   updateAppointment,
   getAppointmentByRoomId,
   getAppointmentCount,
+  updateAppointmentInputSchema,
 } from "../services/appointment.service";
 import bcrypt from "bcrypt";
 import { Op } from "sequelize";
@@ -193,10 +194,11 @@ const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
   return responseOk(res, 200, appointment);
 });
 const updateOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.id);
+  const id = parseInt(req.params.id, 10);
+  console.log(id, req.body);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(id);
+  console.log(requestParams);
+
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -208,8 +210,17 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (req.body.date < new Date()) {
     return responseBadRequest(res, "Date cannot be lower than today date");
   }
-
-  const requestData = storeAppointmentInputSchema.safeParse(req.body);
+  const departmentToNumber = parseInt(req.body.departmentId, 10);
+  const roomToNumber = parseInt(req.body.roomId, 10);
+  const staffToNumber = parseInt(req.body.staffId, 10);
+  const data = {
+    ...req.body,
+    departmentId: departmentToNumber,
+    roomId: roomToNumber,
+    staffId: staffToNumber,
+  };
+  const requestData = storeAppointmentInputSchema.safeParse(data);
+  console.log("requestData", requestData);
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
