@@ -28,7 +28,7 @@ Holiday.init(
     modelName: "holiday",
     tableName: "holiday",
     timestamps: true,
-    paranoid: true,
+    paranoid: false,
     underscored: true,
   }
 );
