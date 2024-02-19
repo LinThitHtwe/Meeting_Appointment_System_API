@@ -28,4 +28,12 @@ const update = (
     ...options,
   });
 
-export default { findAll, findByPk, create, update };
+  const remove = (id:number) => {
+    return WorkingHours.destroy({
+      where: {
+        id,
+      },
+    });
+  }
+
+export default { findAll, findByPk, create, update, remove };
