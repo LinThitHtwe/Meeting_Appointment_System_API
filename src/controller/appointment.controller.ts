@@ -53,10 +53,7 @@ const getCount = asyncHandler(async (req, res, next) => {
   const departmentCount = await getAppointmentCount({
     attributes: [
       [sequelize.literal('"department"."name"'), "departmentName"],
-      [
-        sequelize.fn("count", sequelize.col("department_id")),
-        "departmentCount",
-      ],
+      [sequelize.fn("count", sequelize.col("department_id")), "departmentCount"],
     ],
     include: [
       {
@@ -161,10 +158,7 @@ const compareAppointmentCode = asyncHandler(async (req, res, next) => {
 });
 
 const getOne = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.id);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.id);
 
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
@@ -179,10 +173,7 @@ const getOne = asyncHandler(async (req, res, next) => {
 });
 
 const getAppointmentRoomId = asyncHandler(async (req, res, next) => {
-  const requestParams = z
-    .number({ coerce: true })
-    .positive()
-    .safeParse(req.params.roomId);
+  const requestParams = z.number({ coerce: true }).positive().safeParse(req.params.roomId);
   if (!requestParams.success) {
     return responseUnprocessableEntity(res, requestParams.error);
   }
@@ -210,16 +201,23 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (req.body.date < new Date()) {
     return responseBadRequest(res, "Date cannot be lower than today date");
   }
-  const departmentToNumber = parseInt(req.body.departmentId, 10);
-  const roomToNumber = parseInt(req.body.roomId, 10);
-  const staffToNumber = parseInt(req.body.staffId, 10);
+  // const departmentToNumber = parseInt(req.body.departmentId, 10);
+
+  // Ensure roomId and staffId are valid numbers
+  // const roomId = parseInt(req.body.roomId, 10);
+  // const staffId = parseInt(req.body.staffId, 10);
+
+  // Check if roomId and staffId are valid numbers
+  // if (isNaN(roomId) || isNaN(staffId)) {
+  //   throw new Error("RoomId and staffId must be valid numbers");
+  // }
   const data = {
     ...req.body,
-    departmentId: departmentToNumber,
-    roomId: roomToNumber,
-    staffId: staffToNumber,
+    // departmentId: departmentToNumber,
+    // roomId: roomId,
+    // staffId: staffId,
   };
-  const requestData = storeAppointmentInputSchema.safeParse(data);
+  const requestData = updateAppointmentInputSchema.safeParse(data);
   console.log("requestData", requestData);
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
@@ -232,27 +230,30 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (isHolidayAlreadyExist.length > 0) {
     responseConflict(res, "Cannot Schedule an Appointment on Holidays");
   }
+  console.log(requestData);
 
-  const isAppointmentAlreadyExist = await getAllAppointments({
-    where: {
-      id: {
-        [Op.not]: requestParams.data,
-      },
-      roomId: requestData.data.roomId,
-      date: requestData.data.date,
-      [Op.and]: [
-        {
-          [Op.and]: [
-            { startTime: { [Op.lt]: requestData.data.endTime } },
-            { endTime: { [Op.gt]: requestData.data.startTime } },
-          ],
+  if (requestData.data.date && requestData.data.roomId) {
+    const isAppointmentAlreadyExist = await getAllAppointments({
+      where: {
+        id: {
+          [Op.not]: requestParams.data,
         },
-      ],
-    },
-  });
+        roomId: requestData.data.roomId,
+        date: requestData.data.date,
+        [Op.and]: [
+          {
+            [Op.and]: [
+              { startTime: { [Op.lt]: requestData.data.endTime } },
+              { endTime: { [Op.gt]: requestData.data.startTime } },
+            ],
+          },
+        ],
+      },
+    });
 
-  if (isAppointmentAlreadyExist.length > 0) {
-    return responseConflict(res, "Appointment Already Exist");
+    if (isAppointmentAlreadyExist.length > 0) {
+      return responseConflict(res, "Appointment Already Exist");
+    }
   }
 
   const appointment = await sequelize.transaction(async (transaction) =>
