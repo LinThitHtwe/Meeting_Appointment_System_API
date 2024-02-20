@@ -1,4 +1,4 @@
-import { CreateOptions, FindOptions, Identifier, col, fn } from "sequelize";
+import { CreateOptions, FindOptions, Identifier, UpdateOptions, col, fn } from "sequelize";
 import Appointment, { AppointmentAttributes } from "../models/Appointment";
 
 type createAppointment = {
@@ -20,7 +20,7 @@ type updateAppointment = {
   accountId?: number;
   roomId?: number;
   staffId?: number;
-  code: string;
+  code?: string;
 };
 
 const findAll = (options?: FindOptions<AppointmentAttributes>) => Appointment.findAll(options);
@@ -28,8 +28,7 @@ const findAll = (options?: FindOptions<AppointmentAttributes>) => Appointment.fi
 const findByPk = (identifier: Identifier, options?: FindOptions<AppointmentAttributes>) =>
   Appointment.findByPk(identifier, options);
 
-const findCount = (options: FindOptions<AppointmentAttributes>) =>
-  Appointment.findAll(options);
+const findCount = (options: FindOptions<AppointmentAttributes>) => Appointment.findAll(options);
 
 const findByRoomId = (roomId: number, options?: FindOptions<AppointmentAttributes>) =>
   Appointment.findAll({ where: { roomId }, ...options });
@@ -37,7 +36,7 @@ const findByRoomId = (roomId: number, options?: FindOptions<AppointmentAttribute
 const create = (data: createAppointment, options?: CreateOptions<AppointmentAttributes>) =>
   Appointment.create(data, options);
 
-const update = (data: updateAppointment, options?: CreateOptions<AppointmentAttributes> | any) =>
+const update = (data: updateAppointment, options?: UpdateOptions<AppointmentAttributes> | any) =>
   Appointment.update(data, {
     where: options?.where || {},
     returning: true,
