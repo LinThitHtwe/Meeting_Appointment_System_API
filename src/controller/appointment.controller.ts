@@ -210,7 +210,7 @@ const updateOne = asyncHandler(async (req, res, next) => {
   // Check if roomId and staffId are valid numbers
   // if (isNaN(roomId) || isNaN(staffId)) {
   //   throw new Error("RoomId and staffId must be valid numbers");
-  // }
+  // }s
   const data = {
     ...req.body,
     // departmentId: departmentToNumber,
@@ -230,9 +230,9 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (isHolidayAlreadyExist.length > 0) {
     responseConflict(res, "Cannot Schedule an Appointment on Holidays");
   }
-  console.log(requestData);
 
   if (requestData.data.date && requestData.data.roomId) {
+    console.log("date and roomId");
     const isAppointmentAlreadyExist = await getAllAppointments({
       where: {
         id: {
