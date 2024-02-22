@@ -6,7 +6,7 @@ dotenv.config();
 let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
 
 // export const sequelize = new Sequelize(
-//   "ace_meeting_room_appointment_system",
+// "ace_meeting_room_appointment_system",
 //   "postgres",
 //   process.env.DB_PASSWORD,
 //   {
@@ -23,22 +23,27 @@ let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
 //   }
 // );
 
-export const sequelize = new Sequelize(PGDATABASE, PGUSER, PGPASSWORD, {
-  dialect: "postgres",
-  host: PGHOST,
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
+export const sequelize = new Sequelize(
+  PGDATABASE || "ace_meeting_room_appointment_system",
+  PGUSER || "postgres",
+  PGPASSWORD,
+  {
+    dialect: "postgres",
+    host: PGHOST || "",
+    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+      connection: {
+        options: `project=${ENDPOINT_ID}`,
+      },
     },
-    connection: {
-      options: `project=${ENDPOINT_ID}`,
-    },
-  },
 
-  sync: { alter: true },
-});
+    sync: { alter: true },
+  }
+);
 
 // const sql = postgres({
 //   host: PGHOST,
