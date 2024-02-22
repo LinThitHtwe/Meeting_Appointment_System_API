@@ -11,12 +11,12 @@ export const sequelize = new Sequelize(
     dialect: "postgres",
     host: "localhost",
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
-    // dialectOptions: {
-    //   ssl: {
-    //     require: true,
-    //     rejectUnauthorized: false,
-    //   },
-    // },
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
     sync: { alter: true },
   }
 );
