@@ -1,66 +1,48 @@
-import { Sequelize } from "sequelize";
+import { Options, Sequelize } from "sequelize";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID } = process.env;
+let { PGHOST, PGDATABASE, PGUSER, PGPASSWORD, ENDPOINT_ID, NODE_ENV } = process.env;
 
-// export const sequelize = new Sequelize(
-// "ace_meeting_room_appointment_system",
-//   "postgres",
-//   process.env.DB_PASSWORD,
-//   {
-//     dialect: "postgres",
-//     host: "localhost",
-//     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
-//     dialectOptions: {
-//       ssl: {
-//         require: true,
-//         rejectUnauthorized: false,
-//       },
-//     },
-//     sync: { alter: true },
-//   }
-// );
+const isProduction = NODE_ENV === "production";
 
-export const sequelize = new Sequelize(
-  PGDATABASE || "ace_meeting_room_appointment_system",
-  PGUSER || "postgres",
-  PGPASSWORD,
-  {
-    dialect: "postgres",
-    host: PGHOST || "",
-    port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-      connection: {
-        options: `project=${ENDPOINT_ID}`,
-      },
+const developmentConfig: Options = {
+  dialect: "postgres",
+  host: "localhost",
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+  sync: { alter: true },
+};
+
+const productionConfig: Options = {
+  dialect: "postgres",
+  host: PGHOST || "",
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
     },
+    connection: {
+      options: `project=${ENDPOINT_ID}`,
+    },
+  },
+  sync: { alter: true },
+};
 
-    sync: { alter: true },
-  }
+const sequelize = new Sequelize(
+  isProduction ? PGDATABASE || "" : "ace_meeting_room_appointment_system",
+  isProduction ? PGUSER || "" : "postgres",
+  isProduction ? PGPASSWORD : process.env.DB_PASSWORD,
+  isProduction ? productionConfig : developmentConfig
 );
 
-// const sql = postgres({
-//   host: PGHOST,
-//   database: PGDATABASE,
-//   username: PGUSER,
-//   password: PGPASSWORD,
-//   port: 5432,
-//   ssl: 'require',
-//   connection: {
-//     options: `project=${ENDPOINT_ID}`,
-//   },
-// });
+export { sequelize };
 
 export const testDbConnection = async () => {
   try {
     await sequelize.authenticate();
-    console.log("Db Connnected");
+    console.log("Db Connected");
   } catch (error) {
     console.error("Unable to connect--", error);
   }
