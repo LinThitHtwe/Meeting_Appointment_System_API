@@ -1,7 +1,7 @@
 import { z } from "zod";
 import departmentRepository from "../repository/department.repository";
 import { DepartmentAttributes } from "../models/Department";
-import { CreateOptions } from "sequelize";
+import { CreateOptions, FindOptions } from "sequelize";
 
 export const storeDepartmentInputSchema = z.object({
   name: z
@@ -10,11 +10,19 @@ export const storeDepartmentInputSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "Name cannot be blank or contain only whitespace",
     }),
+  description: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Description cannot be blank or contain only whitespace",
+    }),
 });
 
-export const getAllDepartments = async () => {
+export const getAllDepartments = async (
+  options?: FindOptions<DepartmentAttributes>
+) => {
   try {
-    const departments = await departmentRepository.findAll();
+    const departments = await departmentRepository.findAll(options);
     return departments;
   } catch (error) {
     throw error;
@@ -38,6 +46,7 @@ export const createDepartment = async (
     const newDepartment = await departmentRepository.create(
       {
         name: input.name,
+        description: input.description,
       },
       options
     );

@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
 import {
   asyncHandler,
+  responseConflict,
   responseNotFounds,
   responseOk,
   responseUnprocessableEntity,
@@ -14,6 +14,8 @@ import {
 } from "../services/room.service";
 import { sequelize } from "../../config/db";
 import { z } from "zod";
+import { Op, Sequelize, WhereOptions } from "sequelize";
+import { RoomAttributes } from "../models/Room";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const rooms = await getAllRooms();
@@ -25,9 +27,19 @@ const store = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
-  const room = await sequelize.transaction(async (transaction) => {
-    createRoom(requestData.data, { transaction });
+  const isRoomAlreadyExist = await getAllRooms({
+    where: Sequelize.where(
+      Sequelize.fn("LOWER", Sequelize.col("name")),
+      Sequelize.fn("LOWER", requestData.data.name)
+    ),
   });
+  console.log("rooommm----", isRoomAlreadyExist);
+  if (isRoomAlreadyExist.length > 0) {
+    return responseConflict(res, "Room Already Exist");
+  }
+  const room = await sequelize.transaction(async (transaction) =>
+    createRoom(requestData.data, { transaction })
+  );
 
   return responseOk(res, 201, room);
 });
@@ -65,6 +77,24 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
+  const isRoomAlreadyExist = await getAllRooms({
+    where: {
+      id: {
+        [Op.not]: requestParams.data,
+      },
+      [Op.and]: [
+        Sequelize.where(
+          Sequelize.fn("LOWER", Sequelize.col("name")),
+          Sequelize.fn("LOWER", requestData.data.name)
+        ),
+      ],
+    },
+  });
+  console.log("-------", isRoomAlreadyExist);
+  if (isRoomAlreadyExist.length > 0) {
+    return responseConflict(res, "Room Already Exist");
+  }
+
   const room = await sequelize.transaction(async (transaction) =>
     updateRoom(requestData.data, {
       transaction,

@@ -1,18 +1,43 @@
 import { z } from "zod";
 import accountRepository from "../repository/account.repository";
-import { AccountAttributes } from "../models/Account";
+import { AccountAttributes } from "../models/Admin";
 import { CreateOptions } from "sequelize";
+import jwt from 'jsonwebtoken';
 
 export const storeAccountInputSchema = z.object({
-  name: z
+  username: z
     .string()
     .max(255)
     .refine((data) => data.trim() !== "", {
       message: "Name cannot be blank or contain only whitespace",
     }),
-  departmentId: z.number(),
-  staffId: z.number(),
+  password: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Password cannot be blank or contain only whitespace",
+    }),
 });
+
+const jwtSign = jwt.sign;
+
+export const login = async (username:string, password:string) => {
+  try {
+    const account = await accountRepository.findByUsername(username);
+    console.log("🚀 ~ login ~ account:", account)
+    if (!account) {
+      throw new Error("Incorrect username");
+    }
+    if (account?.password !== password) {
+      throw new Error("Incorrect password");
+    }
+    const token = await jwtSign({username: account.username}, "very_strong_key", {expiresIn: "48h"});
+    const response = {account: account, token: token};
+    return response;
+  } catch (error) {
+    throw error
+  }
+}
 
 export const getAllAccounts = async () => {
   try {
@@ -39,9 +64,8 @@ export const createAccount = async (
   try {
     const newAccount = await accountRepository.create(
       {
-        departmentId: input.departmentId,
-        name: input.name,
-        staffId: input.staffId,
+        password: input.password,
+        username: input.username,
       },
       options
     );
@@ -58,9 +82,8 @@ export const updateAccount = async (
   try {
     const updatedAccount = accountRepository.update(
       {
-        departmentId: input?.departmentId,
-        name: input?.name,
-        staffId: input?.staffId,
+        password: input?.password,
+        username: input?.username,
       },
       options
     );

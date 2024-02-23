@@ -1,5 +1,6 @@
 import {
   asyncHandler,
+  responseConflict,
   responseNotFounds,
   responseOk,
   responseUnprocessableEntity,
@@ -14,6 +15,7 @@ import {
   storeDepartmentInputSchema,
   updateDepartment,
 } from "../services/department.service";
+import { Op, Sequelize } from "sequelize";
 
 const getAll = asyncHandler(async (req, res, next) => {
   const departments = await getAllDepartments();
@@ -24,6 +26,16 @@ const store = asyncHandler(async (req, res, next) => {
   const requestData = storeDepartmentInputSchema.safeParse(req.body);
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
+  }
+  const isDepartmentAlreadyExist = await getAllDepartments({
+    where: Sequelize.where(
+      Sequelize.fn("LOWER", Sequelize.col("name")),
+      Sequelize.fn("LOWER", requestData.data.name)
+    ),
+  });
+
+  if (isDepartmentAlreadyExist.length > 0) {
+    return responseConflict(res, "Department Already Exist");
   }
   const department = await sequelize.transaction(async (transaction) =>
     createDepartment(requestData.data, { transaction })
@@ -63,6 +75,24 @@ const updateOne = asyncHandler(async (req, res, next) => {
   if (!requestData.success) {
     return responseUnprocessableEntity(res, requestData.error);
   }
+
+  const isDepartmentAlreadyExist = await getAllDepartments({
+    where: {
+      id: {
+        [Op.not]: requestParams.data,
+      },
+      [Op.and]: [
+        Sequelize.where(
+          Sequelize.fn("LOWER", Sequelize.col("name")),
+          Sequelize.fn("LOWER", requestData.data.name)
+        ),
+      ],
+    },
+  });
+  if (isDepartmentAlreadyExist.length > 0) {
+    return responseConflict(res, "Department Already Exist");
+  }
+
   const department = await sequelize.transaction(async (transaction) =>
     updateDepartment(requestData.data, {
       transaction,

@@ -10,12 +10,12 @@ const findByPk = (
 ) => Department.findByPk(identifier, options);
 
 const create = (
-  data: { name: string },
+  data: { name: string; description: string },
   options?: CreateOptions<DepartmentAttributes>
 ) => Department.create(data, options);
 
 const update = async (
-  data: { name: string },
+  data: { name?: string; description?: string },
   options?: CreateOptions<DepartmentAttributes> | any
 ) => {
   return Department.update(data, {

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import roomRepository from "../repository/room.repository";
-import { CreateOptions } from "sequelize";
+import { CreateOptions, FindOptions } from "sequelize";
 import { RoomAttributes } from "../models/Room";
 
 export const storeRoomInputSchema = z.object({
@@ -10,12 +10,17 @@ export const storeRoomInputSchema = z.object({
     .refine((data) => data.trim() !== "", {
       message: "Name cannot be blank or contain only whitespace",
     }),
-  departmentId: z.number(),
+  description: z
+    .string()
+    .max(255)
+    .refine((data) => data.trim() !== "", {
+      message: "Description cannot be blank or contain only whitespace",
+    }),
 });
 
-export const getAllRooms = async () => {
+export const getAllRooms = async (options?: FindOptions<RoomAttributes>) => {
   try {
-    const rooms = await roomRepository.findAll();
+    const rooms = await roomRepository.findAll(options);
     return rooms;
   } catch (error) {
     throw error;
@@ -39,12 +44,13 @@ export const createRoom = async (
     const newRoom = await roomRepository.create(
       {
         name: input.name,
-        departmentId: input.departmentId,
+        description: input.description,
       },
       options
     );
     return newRoom;
   } catch (error) {
+    console.log("erer---", error);
     throw error;
   }
 };
@@ -55,7 +61,7 @@ export const updateRoom = async (
 ) => {
   try {
     const updatedRoom = roomRepository.update(
-      { name: input.name, departmentId: input?.departmentId },
+      { name: input?.name, description: input?.description },
       options
     );
     return updatedRoom;

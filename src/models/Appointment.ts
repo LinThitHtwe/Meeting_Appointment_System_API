@@ -1,28 +1,23 @@
-import {
-  DataTypes,
-  InferAttributes,
-  InferCreationAttributes,
-  Model,
-} from "sequelize";
+import { DataTypes, InferAttributes, InferCreationAttributes, Model } from "sequelize";
 import { sequelize } from "../../config/db";
-import Account from "./Account";
+import Account from "./Admin";
 import Room from "./Room";
+import Department from "./Department";
 
 export type AppointmentAttributes = InferAttributes<Appointment>;
 export type AppointmentCreationAttribute = InferCreationAttributes<Appointment>;
 
-class Appointment extends Model<
-  AppointmentAttributes,
-  AppointmentCreationAttribute
-> {
+class Appointment extends Model<AppointmentAttributes, AppointmentCreationAttribute> {
   declare id?: number;
-  declare date: string | object;
-  declare startTime: string | object;
-  declare endTime: string | object;
+  declare date: Date;
+  declare startTime: string;
+  declare endTime: string;
   declare description: string;
-  declare accountId: number;
+  declare staffId: number;
+  declare isDeleted?: boolean;
+  declare code: string;
   declare roomId: number;
-  declare deletedAt?: string | object;
+  declare departmentId: number;
 }
 Appointment.init(
   {
@@ -43,29 +38,29 @@ Appointment.init(
       type: DataTypes.TIME,
       allowNull: false,
     },
+    code: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     description: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    accountId: {
+    staffId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: "account",
-        key: "id",
-      },
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
     },
     roomId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: "room",
-        key: "id",
-      },
     },
-    deletedAt: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
+    departmentId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
   },
   {
@@ -77,9 +72,10 @@ Appointment.init(
     underscored: true,
   }
 );
-Appointment.belongsTo(Account, { foreignKey: "account_id" });
-Account.hasMany(Appointment, { foreignKey: "account_id" });
-Appointment.belongsTo(Room, { foreignKey: "room_id" });
-Room.hasMany(Appointment, { foreignKey: "room_id" });
+
+Appointment.belongsTo(Room, { foreignKey: "roomId" });
+Room.hasMany(Appointment);
+Appointment.belongsTo(Department, { foreignKey: "departmentId" });
+Department.hasMany(Appointment);
 
 export default Appointment;

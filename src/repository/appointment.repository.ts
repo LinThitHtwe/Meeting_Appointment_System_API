@@ -1,41 +1,42 @@
-import { CreateOptions, FindOptions, Identifier } from "sequelize";
+import { CreateOptions, FindOptions, Identifier, UpdateOptions, col, fn } from "sequelize";
 import Appointment, { AppointmentAttributes } from "../models/Appointment";
 
 type createAppointment = {
-  date: string | object;
-  startTime: string | object;
-  endTime: string | object;
+  date: Date;
+  startTime: string;
+  endTime: string;
   description: string;
-  accountId: number;
   roomId: number;
+  staffId: number;
+  departmentId: number;
+  code: string;
 };
 
 type updateAppointment = {
-  date?: string | object;
-  startTime?: string | object;
-  endTime?: string | object;
+  date?: Date;
+  startTime?: string;
+  endTime?: string;
   description?: string;
   accountId?: number;
   roomId?: number;
+  staffId?: number;
+  code?: string;
 };
 
-const findAll = (options?: FindOptions<AppointmentAttributes>) =>
-  Appointment.findAll(options);
+const findAll = (options?: FindOptions<AppointmentAttributes>) => Appointment.findAll(options);
 
-const findByPk = (
-  identifier: Identifier,
-  options?: FindOptions<AppointmentAttributes>
-) => Appointment.findByPk(identifier, options);
+const findByPk = (identifier: Identifier, options?: FindOptions<AppointmentAttributes>) =>
+  Appointment.findByPk(identifier, options);
 
-const create = (
-  data: createAppointment,
-  options?: CreateOptions<AppointmentAttributes>
-) => Appointment.create(data, options);
+const findCount = (options: FindOptions<AppointmentAttributes>) => Appointment.findAll(options);
 
-const update = (
-  data: updateAppointment,
-  options?: CreateOptions<AppointmentAttributes> | any
-) =>
+const findByRoomId = (roomId: number, options?: FindOptions<AppointmentAttributes>) =>
+  Appointment.findAll({ where: { roomId }, ...options });
+
+const create = (data: createAppointment, options?: CreateOptions<AppointmentAttributes>) =>
+  Appointment.create(data, options);
+
+const update = (data: updateAppointment, options?: UpdateOptions<AppointmentAttributes> | any) =>
   Appointment.update(data, {
     where: options?.where || {},
     returning: true,
@@ -43,4 +44,4 @@ const update = (
     ...options,
   });
 
-export default { findAll, findByPk, create, update };
+export default { findAll, findCount, findByPk, create, update, findByRoomId };

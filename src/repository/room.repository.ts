@@ -10,12 +10,12 @@ const findByPk = (
 ) => Room.findByPk(identifier, options);
 
 const create = (
-  data: { name: string; departmentId: number },
+  data: { name: string; description: string },
   options?: CreateOptions<RoomAttributes>
 ) => Room.create(data, options);
 
 const update = (
-  data: { name: string; departmentId?: number },
+  data: { name: string; description?: string },
   options?: CreateOptions<RoomAttributes> | any
 ) =>
   Room.update(data, {
